@@ -12,7 +12,7 @@ export const validate = (validation: RunnableValidationChains<ValidationChain>) 
 
     const isNoError = errors.every((error) => error.isEmpty());
     if (isNoError) {
-      next();
+      return next();
     }
 
     const errorObject: Record<string, ExpressValidationError> = {};
@@ -30,6 +30,15 @@ export const validate = (validation: RunnableValidationChains<ValidationChain>) 
       details: errorObject,
     });
 
-    next(validationError);
+    return next(validationError);
   };
 };
+
+export const getValidationMessage = (errorDetail?: string) => (field: string, customErrorDetail?: string) => {
+  const text = `The field '{{field}}' ${errorDetail || customErrorDetail || 'is invalid'}.`;
+  return text.replace('{{field}}', field);
+};
+
+export const getRequiredMessage = getValidationMessage('is required');
+export const getInvalidMessage = getValidationMessage('is invalid');
+export const getCustomMessage = getValidationMessage();
