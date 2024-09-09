@@ -2,7 +2,7 @@ import { Collection, Db, MongoClient } from 'mongodb';
 
 import User from '@/models/schemas/User.shema';
 
-const CONNECTION_UI = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@clickup.fabew.mongodb.net/?retryWrites=true&w=majority&appName=clickup`;
+const CONNECTION_UI = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@clickup.nssxu.mongodb.net/?retryWrites=true&w=majority&appName=Clickup`;
 
 class DatabaseService {
   private client: MongoClient;
