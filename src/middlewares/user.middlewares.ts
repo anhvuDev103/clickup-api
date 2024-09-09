@@ -6,10 +6,10 @@ export const signInValidator = validate(
   checkSchema(
     {
       email: {
-        isEmail: true,
+        notEmpty: true,
       },
       password: {
-        isString: true,
+        notEmpty: true,
       },
     },
     ['body'],
