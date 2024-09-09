@@ -1,0 +1,4 @@
+export const CONTAIN_NUMBERS_REGEX = /\d/;
+export const CONTAIN_SPECIAL_CHARACTERS_REGEX = /[^a-zA-Z0-9\s]/;
+export const CONTAIN_UPPERCASE_CHARACTERS_REGEX = /[A-Z]/;
+export const CONTAIN_LOWERCASE_CHARACTERS_REGEX = /[a-z]/;
