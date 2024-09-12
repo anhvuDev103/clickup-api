@@ -34,7 +34,7 @@ authRouter.post('/sign-up', signUpValidator, wrapRequestHandler(signUpController
  * Response:
  * - 200 OK: On successful sign-in.
  * - 422 Unprocessable Entity: When input data is invalid.
- * - 401 Unauthorized: When the email or password is incorrect.
+ * - 401 Unauthorized: When the password is incorrect.
  */
 authRouter.post('/sign-in', signInValidator, wrapRequestHandler(signInController));
 

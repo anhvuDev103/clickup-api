@@ -1,4 +1,4 @@
-import { EmailStatus } from '@/models/responses/verification.responses';
+import { EmailStatusResponse } from '@/models/responses/verification.responses';
 
 import databaseService from './database.services';
 
@@ -8,14 +8,14 @@ class VerificationService {
    *
    * @param {string} email - The email address to check.
    *
-   * @returns {Promise<EmailStatus>} - A promise that resolves with the email's status if successful.
+   * @returns {Promise<EmailStatusResponse>} - A promise that resolves with the email's status if successful.
    *
    * @throws {Error} if any database side errors occur.
    */
-  async getEmailStatus(email: string): Promise<EmailStatus> {
+  async getEmailStatus(email: string): Promise<EmailStatusResponse> {
     const existingUser = await databaseService.users.findOne({ email });
 
-    const result: EmailStatus = {
+    const result: EmailStatusResponse = {
       email_taken: Boolean(existingUser),
     };
 

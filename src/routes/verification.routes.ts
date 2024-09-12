@@ -15,7 +15,7 @@ const verificationRouter = express.Router();
  * }
  *
  * Response:
- * - 200 OK: Returns EmailStatus.
+ * - 200 OK: Returns EmailStatusResponse.
  * - 422 Unprocessable Entity: When input data is invalid.
  */
 verificationRouter.get('/email', emailValidator, wrapRequestHandler(checkEmailStatusController));

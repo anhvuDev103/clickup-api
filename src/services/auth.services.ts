@@ -1,8 +1,6 @@
-import { InsertOneResult } from 'mongodb';
-
 import { TokenType } from '@/constants/enums';
 import { SignUpRequestBody } from '@/models/requests/auth.requests';
-import { SignUpResponseResponse } from '@/models/responses/auth.responses';
+import { SignInResponseResponse, SignUpResponseResponse } from '@/models/responses/auth.responses';
 import User from '@/models/schemas/User.shema';
 import { generateOTP } from '@/utils/common';
 import { hashPassword } from '@/utils/crypto';
@@ -75,7 +73,8 @@ class AuthService {
   }
 
   /**
-   * Registers a new user in the system.
+   * Registers a new user in the system
+   * & Generates refresh token and access token.
    *
    * @param {Object} payload - An object containing user sign-up information.
    * @param {string} payload.name - The name provided by the user.
@@ -103,7 +102,23 @@ class AuthService {
     return { refresh_token, access_token };
   }
 
-  async signIn() {}
+  /**
+   * Authenticates a user
+   * & Generates refresh token and access token.
+   *
+   * @param {Object} payload - An object containing user sign-in information.
+   * @param {string} payload.email - The email address provided by the user.
+   * @param {string} payload.password - The password provided by the user.
+   *
+   * @returns {Promise<SignInResponseResponse>} - A promise that resolves with the created user object if successful.
+   *
+   * @throws {Error} if any database side errors occur.
+   */
+  async signIn(user_id: string): Promise<SignInResponseResponse> {
+    const [refresh_token, access_token] = await this.signRefreshAndAccessToken(user_id);
+
+    return { refresh_token, access_token };
+  }
 }
 
 const authService = new AuthService();

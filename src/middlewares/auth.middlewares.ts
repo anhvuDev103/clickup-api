@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { checkSchema } from 'express-validator';
 
 import HTTP_STATUS from '@/constants/http-status';
@@ -9,6 +10,7 @@ import {
   CONTAIN_UPPERCASE_CHARACTERS_REGEX,
 } from '@/constants/regexs';
 import { BaseError } from '@/models/Errors.model';
+import { SignInRequestBody } from '@/models/requests/auth.requests';
 import databaseService from '@/services/database.services';
 import { hashPassword } from '@/utils/crypto';
 import { getCustomMessage, getInvalidMessage, getRequiredMessage, validate } from '@/utils/validate';
@@ -84,8 +86,10 @@ export const signInValidator = validate(
       password: {
         custom: {
           options: async (value: string, { req }) => {
+            const { email } = req.body as SignInRequestBody;
+
             const user = await databaseService.users.findOne({
-              email: req.body.email,
+              email,
               password: hashPassword(value),
             });
 
@@ -95,6 +99,8 @@ export const signInValidator = validate(
                 message: RESPONSE_MESSAGE.INCORRECT_PASSWORD,
               });
             }
+
+            (req as Request).user = user;
 
             return true;
           },
