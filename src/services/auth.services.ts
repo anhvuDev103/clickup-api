@@ -1,13 +1,79 @@
 import { InsertOneResult } from 'mongodb';
 
+import { TokenType } from '@/constants/enums';
 import { SignUpRequestBody } from '@/models/requests/auth.requests';
+import { SignUpResponseResponse } from '@/models/responses/auth.responses';
 import User from '@/models/schemas/User.shema';
 import { generateOTP } from '@/utils/common';
 import { hashPassword } from '@/utils/crypto';
+import { signToken } from '@/utils/jwt';
 
 import databaseService from './database.services';
 
 class AuthService {
+  /**
+   * Generates a refresh token for a user.
+   *
+   * @param {string} user_id - The id of user.
+   *
+   * @returns {Promise<string>} - A signed refresh token.
+   *
+   * @throws {Error} if jwt sign token failed.
+   */
+  private async signRefreshToken(user_id: string): Promise<string> {
+    const token = await signToken({
+      payload: {
+        user_id,
+        token_type: TokenType.RefreshToken,
+      },
+      secretOrPrivateKey: process.env.REFRESH_TOKEN_SECRET as string,
+      options: {
+        expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN as string,
+      },
+    });
+
+    return token;
+  }
+
+  /**
+   * Generates a access token for a user.
+   *
+   * @param {string} user_id - The id of user.
+   *
+   * @returns {Promise<string>} - A signed access token.
+   *
+   * @throws {Error} if jwt sign token failed.
+   */
+  private async signAccessToken(user_id: string): Promise<string> {
+    const token = await signToken({
+      payload: {
+        user_id,
+        token_type: TokenType.AccessToken,
+      },
+      secretOrPrivateKey: process.env.ACCESS_TOKEN_SECRET as string,
+      options: {
+        expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN as string,
+      },
+    });
+
+    return token;
+  }
+
+  /**
+   * Generates refresh token and access token for a user.
+   *
+   * @param {string} user_id - The id of user.
+   *
+   * @returns {Promise<[string, string]>} - Signed refresh token and access token.
+   *
+   * @throws {Error} if jwt sign token failed.
+   */
+  private async signRefreshAndAccessToken(user_id: string): Promise<[string, string]> {
+    const tokens = await Promise.all([this.signRefreshToken(user_id), this.signAccessToken(user_id)]);
+
+    return tokens;
+  }
+
   /**
    * Registers a new user in the system.
    *
@@ -16,13 +82,13 @@ class AuthService {
    * @param {string} payload.email - The unique email address.
    * @param {string} payload.password - The user's password.
    *
-   * @returns {Promise<InsertOneResult<User>>} - A promise that resolves with the created user object if successful.
+   * @returns {Promise<SignUpResponseResponse>} - A promise that resolves with the created user object if successful.
    *
    * @throws {Error} if any database side errors occur.
    */
-  async signUp(payload: SignUpRequestBody): Promise<InsertOneResult<User>> {
+  async signUp(payload: SignUpRequestBody): Promise<SignUpResponseResponse> {
     //TODO: send OTP to user's email
-
+    //TODO: Validate unique email on the database side
     const result = await databaseService.users.insertOne(
       new User({
         ...payload,
@@ -31,7 +97,10 @@ class AuthService {
       }),
     );
 
-    return result;
+    const { insertedId } = result;
+    const [refresh_token, access_token] = await this.signRefreshAndAccessToken(insertedId.toString());
+
+    return { refresh_token, access_token };
   }
 
   async signIn() {}
