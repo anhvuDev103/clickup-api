@@ -1,4 +1,3 @@
-import { Request } from 'express';
 import { checkSchema } from 'express-validator';
 
 import HTTP_STATUS from '@/constants/http-status';
