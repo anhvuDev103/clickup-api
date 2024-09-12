@@ -1,13 +1,13 @@
 import { InsertOneResult } from 'mongodb';
 
-import { SignUpRequestBody } from '@/models/requests/user.requests';
+import { SignUpRequestBody } from '@/models/requests/auth.requests';
 import User from '@/models/schemas/User.shema';
 import { generateOTP } from '@/utils/common';
 import { hashPassword } from '@/utils/crypto';
 
 import databaseService from './database.services';
 
-class UserService {
+class AuthService {
   /**
    * Registers a new user in the system.
    *
@@ -35,23 +35,8 @@ class UserService {
   }
 
   async signIn() {}
-
-  /**
-   * Checks if an email already exists in the database.
-   *
-   * @param {string} email - The email address to check.
-   *
-   * @returns {Promise<boolean>} - A promise that resolves with the created user object if successful.
-   *
-   * @throws {Error} if any database side errors occur.
-   */
-  async checkIfEmailExists(email: string) {
-    const existingUser = await databaseService.users.findOne({ email });
-
-    return Boolean(existingUser);
-  }
 }
 
-const userService = new UserService();
+const authService = new AuthService();
 
-export default userService;
+export default authService;

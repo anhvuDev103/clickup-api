@@ -3,12 +3,12 @@ import { ParamsDictionary } from 'express-serve-static-core';
 
 import HTTP_STATUS from '@/constants/http-status';
 import { RESPONSE_MESSAGE } from '@/constants/messages';
-import { SignUpRequestBody } from '@/models/requests/user.requests';
+import { SignUpRequestBody } from '@/models/requests/auth.requests';
 import { BaseResponse } from '@/models/Response.model';
-import userService from '@/services/user.services';
+import authService from '@/services/auth.services';
 
 export const signUpController = async (req: Request<ParamsDictionary, unknown, SignUpRequestBody>, res: Response) => {
-  const result = await userService.signUp(req.body);
+  const result = await authService.signUp(req.body);
 
   const response = new BaseResponse({
     status: HTTP_STATUS.CREATED,

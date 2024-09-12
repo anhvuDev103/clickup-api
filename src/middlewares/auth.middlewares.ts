@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { checkSchema } from 'express-validator';
 
 import HTTP_STATUS from '@/constants/http-status';
@@ -9,7 +10,8 @@ import {
   CONTAIN_UPPERCASE_CHARACTERS_REGEX,
 } from '@/constants/regexs';
 import { BaseError } from '@/models/Errors.model';
-import userService from '@/services/user.services';
+import databaseService from '@/services/database.services';
+import { hashPassword } from '@/utils/crypto';
 import { getCustomMessage, getInvalidMessage, getRequiredMessage, validate } from '@/utils/validate';
 
 export const signUpValidator = validate(
@@ -22,19 +24,8 @@ export const signUpValidator = validate(
         trim: true,
       },
       email: {
-        custom: {
-          options: async (value: string) => {
-            if (!value) {
-              throw new Error(getRequiredMessage('email'));
-            }
-
-            const isEmailTaken = await userService.checkIfEmailExists(value);
-            if (isEmailTaken) {
-              throw new BaseError({ status: HTTP_STATUS.CONFLICT, message: RESPONSE_MESSAGE.EMAIL_ALREADY_TAKEN });
-            }
-
-            return true;
-          },
+        notEmpty: {
+          errorMessage: getRequiredMessage('email'),
         },
         isEmail: {
           errorMessage: getInvalidMessage('email'),
@@ -83,10 +74,32 @@ export const signInValidator = validate(
   checkSchema(
     {
       email: {
-        notEmpty: true,
+        notEmpty: {
+          errorMessage: getRequiredMessage('email'),
+        },
+        isEmail: {
+          errorMessage: getInvalidMessage('email'),
+        },
+        trim: true,
       },
       password: {
-        notEmpty: true,
+        custom: {
+          options: async (value: string, { req }) => {
+            const user = await databaseService.users.findOne({
+              email: req.body.email,
+              password: hashPassword(value),
+            });
+
+            if (!user) {
+              throw new BaseError({
+                status: HTTP_STATUS.UNAUTHORIZED,
+                message: RESPONSE_MESSAGE.INCORRECT_PASSWORD,
+              });
+            }
+
+            return true;
+          },
+        },
       },
     },
     ['body'],
