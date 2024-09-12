@@ -3,7 +3,7 @@ import { EmailStatusResponse } from '@/models/responses/verification.responses';
 import databaseService from './database.services';
 
 class VerificationService {
-  /**
+  /**========================================================================================================================
    * Get email's status.
    *
    * @param {string} email - The email address to check.

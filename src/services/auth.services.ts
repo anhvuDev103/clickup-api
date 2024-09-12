@@ -9,7 +9,7 @@ import { signToken } from '@/utils/jwt';
 import databaseService from './database.services';
 
 class AuthService {
-  /**
+  /**========================================================================================================================
    * Generates a refresh token for a user.
    *
    * @param {string} user_id - The id of user.
@@ -33,7 +33,7 @@ class AuthService {
     return token;
   }
 
-  /**
+  /**========================================================================================================================
    * Generates a access token for a user.
    *
    * @param {string} user_id - The id of user.
@@ -58,6 +58,7 @@ class AuthService {
   }
 
   /**
+   * ========================================================================================================================
    * Generates refresh token and access token for a user.
    *
    * @param {string} user_id - The id of user.
@@ -72,7 +73,7 @@ class AuthService {
     return tokens;
   }
 
-  /**
+  /**========================================================================================================================
    * Registers a new user in the system
    * & Generates refresh token and access token.
    *
@@ -102,7 +103,7 @@ class AuthService {
     return { refresh_token, access_token };
   }
 
-  /**
+  /**========================================================================================================================
    * Authenticates a user
    * & Generates refresh token and access token.
    *
