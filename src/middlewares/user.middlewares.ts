@@ -1,11 +1,15 @@
 import { checkSchema } from 'express-validator';
 
+import HTTP_STATUS from '@/constants/http-status';
+import { RESPONSE_MESSAGE } from '@/constants/messages';
 import {
   CONTAIN_LOWERCASE_CHARACTERS_REGEX,
   CONTAIN_NUMBERS_REGEX,
   CONTAIN_SPECIAL_CHARACTERS_REGEX,
   CONTAIN_UPPERCASE_CHARACTERS_REGEX,
 } from '@/constants/regexs';
+import { BaseError } from '@/models/Errors.model';
+import userService from '@/services/user.services';
 import { getCustomMessage, getInvalidMessage, getRequiredMessage, validate } from '@/utils/validate';
 
 export const signUpValidator = validate(
@@ -22,6 +26,11 @@ export const signUpValidator = validate(
           options: async (value: string) => {
             if (!value) {
               throw new Error(getRequiredMessage('email'));
+            }
+
+            const isEmailTaken = await userService.checkIfEmailExists(value);
+            if (isEmailTaken) {
+              throw new BaseError({ status: HTTP_STATUS.CONFLICT, message: RESPONSE_MESSAGE.EMAIL_ALREADY_TAKEN });
             }
 
             return true;
