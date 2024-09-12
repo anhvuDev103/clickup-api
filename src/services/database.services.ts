@@ -1,5 +1,6 @@
 import { Collection, Db, MongoClient } from 'mongodb';
 
+import RefreshToken from '@/models/schemas/RefreshToken.schema';
 import User from '@/models/schemas/User.shema';
 
 const CONNECTION_UI = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@clickup.nssxu.mongodb.net/?retryWrites=true&w=majority&appName=Clickup`;
@@ -22,6 +23,10 @@ class DatabaseService {
 
   get users(): Collection<User> {
     return this.db.collection(process.env.MONGO_USERS_COLLECTION_NAME as string);
+  }
+
+  get refreshTokens(): Collection<RefreshToken> {
+    return this.db.collection(process.env.MONGO_REFRESH_TOKENS_COLLECTION_NAME as string);
   }
 }
 
