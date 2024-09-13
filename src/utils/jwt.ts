@@ -1,4 +1,13 @@
-import jwt, { Secret, SignOptions } from 'jsonwebtoken';
+import jwt, { JwtPayload, Secret, SignOptions } from 'jsonwebtoken';
+
+import { TokenType } from '@/constants/enums';
+
+export interface TokenPayload extends JwtPayload {
+  user_id: string;
+  token_type: TokenType;
+  iat: number;
+  exp: number;
+}
 
 export const signToken = ({
   payload,
@@ -21,6 +30,18 @@ export const signToken = ({
       }
 
       resolve(token as string);
+    });
+  });
+};
+
+export const verifyToken = ({ token, secretOrPublicKey }: { token: string; secretOrPublicKey: Secret }) => {
+  return new Promise<TokenPayload>((resolve, reject) => {
+    jwt.verify(token, secretOrPublicKey, (err, decoded) => {
+      if (err) {
+        reject(err);
+      }
+
+      resolve(decoded as TokenPayload);
     });
   });
 };

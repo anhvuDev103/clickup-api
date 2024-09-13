@@ -1,10 +1,13 @@
+import { ObjectId } from 'mongodb';
+
 import { TokenType } from '@/constants/enums';
 import { SignUpRequestBody } from '@/models/requests/auth.requests';
 import { SignInResponseResponse, SignUpResponseResponse } from '@/models/responses/auth.responses';
+import RefreshToken from '@/models/schemas/RefreshToken.schema';
 import User from '@/models/schemas/User.shema';
 import { generateOTP } from '@/utils/common';
 import { hashPassword } from '@/utils/crypto';
-import { signToken } from '@/utils/jwt';
+import { signToken, TokenPayload, verifyToken } from '@/utils/jwt';
 
 import databaseService from './database.services';
 
@@ -18,6 +21,7 @@ class AuthService {
    *
    * @throws {Error} if jwt sign token failed.
    */
+
   private async signRefreshToken(user_id: string): Promise<string> {
     const token = await signToken({
       payload: {
@@ -42,6 +46,7 @@ class AuthService {
    *
    * @throws {Error} if jwt sign token failed.
    */
+
   private async signAccessToken(user_id: string): Promise<string> {
     const token = await signToken({
       payload: {
@@ -67,10 +72,31 @@ class AuthService {
    *
    * @throws {Error} if jwt sign token failed.
    */
+
   private async signRefreshAndAccessToken(user_id: string): Promise<[string, string]> {
     const tokens = await Promise.all([this.signRefreshToken(user_id), this.signAccessToken(user_id)]);
 
     return tokens;
+  }
+
+  /**
+   * ========================================================================================================================
+   * Decoded refresh token.
+   *
+   * @param {string} token - The token.
+   *
+   * @returns {Promise<TokenPayload>} - Decoded refresh token object.
+   *
+   * @throws {Error} if jwt verify token failed.
+   */
+
+  private async decodeRefreshToken(token: string): Promise<TokenPayload> {
+    const decoded = await verifyToken({
+      token,
+      secretOrPublicKey: process.env.REFRESH_TOKEN_SECRET as string,
+    });
+
+    return decoded;
   }
 
   /**========================================================================================================================
@@ -86,6 +112,7 @@ class AuthService {
    *
    * @throws {Error} if any database side errors occur.
    */
+
   async signUp(payload: SignUpRequestBody): Promise<SignUpResponseResponse> {
     //TODO: send OTP to user's email
     //TODO: Validate unique email on the database side
@@ -99,6 +126,16 @@ class AuthService {
 
     const { insertedId } = result;
     const [refresh_token, access_token] = await this.signRefreshAndAccessToken(insertedId.toString());
+
+    const decodedRefreshToken = await this.decodeRefreshToken(refresh_token);
+    await databaseService.refreshTokens.insertOne(
+      new RefreshToken({
+        token: refresh_token,
+        user_id: insertedId,
+        iat: decodedRefreshToken.iat,
+        exp: decodedRefreshToken.exp,
+      }),
+    );
 
     return { refresh_token, access_token };
   }
@@ -115,8 +152,19 @@ class AuthService {
    *
    * @throws {Error} if any database side errors occur.
    */
+
   async signIn(user_id: string): Promise<SignInResponseResponse> {
     const [refresh_token, access_token] = await this.signRefreshAndAccessToken(user_id);
+
+    const decodedRefreshToken = await this.decodeRefreshToken(refresh_token);
+    await databaseService.refreshTokens.insertOne(
+      new RefreshToken({
+        token: refresh_token,
+        user_id: new ObjectId(user_id),
+        iat: decodedRefreshToken.iat,
+        exp: decodedRefreshToken.exp,
+      }),
+    );
 
     return { refresh_token, access_token };
   }
