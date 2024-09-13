@@ -6,7 +6,7 @@ import { wrapRequestHandler } from '@/utils/error-handler';
 
 const authRouter = express.Router();
 
-/**
+/**========================================================================================================================
  * POST /auth/sign-up
  *
  * Request body:
@@ -22,7 +22,7 @@ const authRouter = express.Router();
  */
 authRouter.post('/sign-up', signUpValidator, wrapRequestHandler(signUpController));
 
-/**
+/**========================================================================================================================
  * POST /auth/sign-in
  *
  * Request body:

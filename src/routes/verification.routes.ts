@@ -6,7 +6,7 @@ import { wrapRequestHandler } from '@/utils/error-handler';
 
 const verificationRouter = express.Router();
 
-/**
+/**========================================================================================================================
  * GET /verification/email
  *
  * Request body:
