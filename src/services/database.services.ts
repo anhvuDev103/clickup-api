@@ -2,6 +2,7 @@ import { Collection, Db, MongoClient } from 'mongodb';
 
 import RefreshToken from '@/models/schemas/RefreshToken.schema';
 import User from '@/models/schemas/User.shema';
+import { logger } from '@/utils/logger';
 
 const CONNECTION_UI = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@clickup.nssxu.mongodb.net/?retryWrites=true&w=majority&appName=Clickup`;
 
@@ -14,11 +15,25 @@ class DatabaseService {
     this.db = this.client.db(process.env.MONGO_DB_NAME);
   }
 
+  private async indexUser() {
+    const isExists = await this.users.indexExists('email_text');
+
+    if (!isExists) {
+      const index = await this.users.createIndex({ email: 'text' }, { unique: true });
+      logger.mongoDb(`Index for ${index} field created successfully`);
+    }
+  }
+
   async connect() {
     await this.client.connect();
 
     await this.db.command({ ping: 1 });
-    console.log('You successfully connected to MongoDB!');
+    logger.mongoDb('Successfully connected to MongoDB!');
+  }
+
+  async createIndexes() {
+    await Promise.all([this.indexUser()]);
+    logger.mongoDb('All necessary indexes have been created');
   }
 
   get users(): Collection<User> {

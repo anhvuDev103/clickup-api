@@ -11,7 +11,12 @@ import { defaultErrorRequestHandler } from './utils/error-handler';
 const app = express();
 const port = process.env.PORT;
 
-databaseService.connect().catch(console.dir);
+databaseService
+  .connect()
+  .then(() => {
+    databaseService.createIndexes();
+  })
+  .catch(console.dir);
 
 app.use(express.json());
 app.use(cors());
