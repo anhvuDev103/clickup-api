@@ -10,7 +10,6 @@ type UserContructor = {
 
   refresh_token?: string;
   forget_password_token?: string;
-  otp_code?: string;
 
   created_at?: Date;
   updated_at?: Date;
@@ -26,7 +25,6 @@ class User {
 
   refresh_token: string;
   forget_password_token: string;
-  otp_code: string;
 
   created_at: Date;
   updated_at: Date;
@@ -43,7 +41,6 @@ class User {
 
     this.refresh_token = payload.refresh_token || '';
     this.forget_password_token = payload.forget_password_token || '';
-    this.otp_code = payload.otp_code || '';
 
     this.created_at = payload.created_at || now;
     this.updated_at = payload.updated_at || now;

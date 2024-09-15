@@ -66,6 +66,22 @@ export const signUpValidator = validate(
         },
         trim: true,
       },
+      otp_code: {
+        notEmpty: {
+          errorMessage: getRequiredMessage('otp_code'),
+        },
+        isNumeric: {
+          errorMessage: getInvalidMessage('otp_code'),
+        },
+        isLength: {
+          options: {
+            min: 4,
+            max: 4,
+          },
+          errorMessage: getCustomMessage('otp_code', 'must be 4 characters'),
+        },
+        trim: true,
+      },
     },
     ['body'],
   ),

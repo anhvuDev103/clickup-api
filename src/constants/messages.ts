@@ -13,4 +13,5 @@ export const RESPONSE_MESSAGE = {
 
   //Error
   VALIDATION_FAILED: 'Validation failed for the request payload.',
+  EMAIL_NOT_VERIFIED_YET: 'Email not verified yet.',
 };

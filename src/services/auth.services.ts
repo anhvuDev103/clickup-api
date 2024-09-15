@@ -10,6 +10,7 @@ import { hashPassword } from '@/utils/crypto';
 import { signToken, TokenPayload, verifyToken } from '@/utils/jwt';
 
 import databaseService from './database.services';
+import verificationService from './verification.services';
 
 class AuthService {
   /**========================================================================================================================
@@ -114,13 +115,17 @@ class AuthService {
    */
 
   async signUp(payload: SignUpRequestBody): Promise<SignUpResponseResponse> {
-    //TODO: send OTP to user's email
-    //TODO: Validate unique email on the database side
+    const { otp_code, ..._payload } = payload;
+
+    await verificationService.verifyEmail({
+      email: payload.email,
+      otp_code,
+    });
+
     const result = await databaseService.users.insertOne(
       new User({
-        ...payload,
-        otp_code: generateOTP(4),
-        password: hashPassword(payload.password),
+        ..._payload,
+        password: hashPassword(_payload.password),
       }),
     );
 

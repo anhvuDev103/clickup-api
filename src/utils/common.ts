@@ -1,4 +1,4 @@
-export function generateOTP(limit: number) {
+export function generateOTP(limit = 4) {
   const digits = '0123456789';
   let OTP = '';
 
