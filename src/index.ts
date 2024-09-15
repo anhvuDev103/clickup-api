@@ -7,6 +7,7 @@ import authRouter from './routes/auth.routes';
 import verificationRouter from './routes/verification.routes';
 import databaseService from './services/database.services';
 import { defaultErrorRequestHandler } from './utils/error-handler';
+import { logger } from './utils/logger';
 
 const app = express();
 const port = process.env.PORT;
@@ -14,7 +15,10 @@ const port = process.env.PORT;
 databaseService
   .connect()
   .then(() => {
-    databaseService.createIndexes();
+    return databaseService.createIndexes();
+  })
+  .then(() => {
+    logger.app('Start');
   })
   .catch(console.dir);
 
@@ -27,5 +31,5 @@ app.use('/auth', authRouter);
 app.use(defaultErrorRequestHandler);
 
 app.listen(port, () => {
-  console.log(`App listening on port ${port}`);
+  logger.app(`Listening on port ${port}`);
 });
