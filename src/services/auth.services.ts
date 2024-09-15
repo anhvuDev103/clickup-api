@@ -202,10 +202,9 @@ class AuthService {
   }
 
   /**========================================================================================================================
-   * Authenticates a user
-   * & Generates refresh token and access token.
+   * Send a link request to reset password to user's email
    *
-   * @param {string} payload.email - The email address provided by the user.
+   * @param {string} email - The email address provided by the user.
    *
    * @returns {Promise<void>} - Returns nothing.
    *
@@ -226,6 +225,7 @@ class AuthService {
     const forgot_password_token = await this.signForgotPasswordToken(user_id);
 
     //TODO: send reset password link to the email
+    console.log('>> Check | forgot_password_token:', forgot_password_token);
 
     await databaseService.users.updateOne(
       {
@@ -234,6 +234,43 @@ class AuthService {
       {
         $set: {
           forgot_password_token,
+        },
+        $currentDate: {
+          updated_at: true,
+        },
+      },
+    );
+  }
+
+  /**========================================================================================================================
+   * Reset the password for user
+   *
+   * @param {string} user_id - The user'id decoded from forgot_password_token.
+   * @param {string} password - The new password provided by the user.
+   *
+   * @returns {Promise<void>} - Returns nothing.
+   *
+   * @throws {Error} if any database side errors occur.
+   */
+
+  async resetPassword(user_id: string, password: string): Promise<void> {
+    const user = await databaseService.users.findOne({ _id: new ObjectId(user_id) });
+
+    if (!user) {
+      throw new BaseError({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: RESPONSE_MESSAGE.USER_NOT_FOUND,
+      });
+    }
+
+    await databaseService.users.updateOne(
+      {
+        _id: user._id,
+      },
+      {
+        $set: {
+          forgot_password_token: '',
+          password: hashPassword(password),
         },
         $currentDate: {
           updated_at: true,

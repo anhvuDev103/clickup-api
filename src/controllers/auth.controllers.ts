@@ -3,10 +3,16 @@ import { ParamsDictionary } from 'express-serve-static-core';
 
 import HTTP_STATUS from '@/constants/http-status';
 import { RESPONSE_MESSAGE } from '@/constants/messages';
-import { ForgotPasswordRequestBody, SignInRequestBody, SignUpRequestBody } from '@/models/requests/auth.requests';
+import {
+  ForgotPasswordRequestBody,
+  ResetPasswordRequestBody,
+  SignInRequestBody,
+  SignUpRequestBody,
+} from '@/models/requests/auth.requests';
 import { BaseResponse } from '@/models/Response.model';
 import User from '@/models/schemas/User.shema';
 import authService from '@/services/auth.services';
+import { TokenPayload } from '@/utils/jwt';
 
 export const signUpController = async (req: Request<ParamsDictionary, unknown, SignUpRequestBody>, res: Response) => {
   const result = await authService.signUp(req.body);
@@ -43,6 +49,22 @@ export const forgotPasswordController = async (
 
   const response = new BaseResponse({
     message: RESPONSE_MESSAGE.RESET_PASSWORD_LINK_HAS_BEEN_SUCCESSFULLY_SENT,
+  });
+
+  return res.status(response.status).json(response);
+};
+
+export const resetPasswordController = async (
+  req: Request<ParamsDictionary, unknown, ResetPasswordRequestBody>,
+  res: Response,
+) => {
+  const { password } = req.body;
+  const { user_id } = req.decoded_forgot_password as TokenPayload;
+
+  await authService.resetPassword(user_id, password);
+
+  const response = new BaseResponse({
+    message: RESPONSE_MESSAGE.PASSWORD_SUCCESSFULLY_RESET,
   });
 
   return res.status(response.status).json(response);
