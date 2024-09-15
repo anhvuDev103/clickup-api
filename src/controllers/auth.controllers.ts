@@ -3,7 +3,7 @@ import { ParamsDictionary } from 'express-serve-static-core';
 
 import HTTP_STATUS from '@/constants/http-status';
 import { RESPONSE_MESSAGE } from '@/constants/messages';
-import { SignInRequestBody, SignUpRequestBody } from '@/models/requests/auth.requests';
+import { ForgotPasswordRequestBody, SignInRequestBody, SignUpRequestBody } from '@/models/requests/auth.requests';
 import { BaseResponse } from '@/models/Response.model';
 import User from '@/models/schemas/User.shema';
 import authService from '@/services/auth.services';
@@ -28,6 +28,21 @@ export const signInController = async (req: Request<ParamsDictionary, unknown, S
   const response = new BaseResponse({
     message: RESPONSE_MESSAGE.SUCCESSFULLY_SIGNED_IN,
     result,
+  });
+
+  return res.status(response.status).json(response);
+};
+
+export const forgotPasswordController = async (
+  req: Request<ParamsDictionary, unknown, ForgotPasswordRequestBody>,
+  res: Response,
+) => {
+  const { email } = req.body;
+
+  await authService.forgotPassword(email);
+
+  const response = new BaseResponse({
+    message: RESPONSE_MESSAGE.RESET_PASSWORD_LINK_HAS_BEEN_SUCCESSFULLY_SENT,
   });
 
   return res.status(response.status).json(response);

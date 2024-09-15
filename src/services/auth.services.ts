@@ -1,11 +1,13 @@
 import { ObjectId } from 'mongodb';
 
 import { TokenType } from '@/constants/enums';
+import HTTP_STATUS from '@/constants/http-status';
+import { RESPONSE_MESSAGE } from '@/constants/messages';
+import { BaseError } from '@/models/Errors.model';
 import { SignUpRequestBody } from '@/models/requests/auth.requests';
 import { SignInResponseResponse, SignUpResponseResponse } from '@/models/responses/auth.responses';
 import RefreshToken from '@/models/schemas/RefreshToken.schema';
 import User from '@/models/schemas/User.shema';
-import { generateOTP } from '@/utils/common';
 import { hashPassword } from '@/utils/crypto';
 import { signToken, TokenPayload, verifyToken } from '@/utils/jwt';
 
@@ -13,6 +15,31 @@ import databaseService from './database.services';
 import verificationService from './verification.services';
 
 class AuthService {
+  /**========================================================================================================================
+   * Generates a forgot password token for a user.
+   *
+   * @param {string} user_id - The id of user.
+   *
+   * @returns {Promise<string>} - A signed refresh token.
+   *
+   * @throws {Error} if jwt sign token failed.
+   */
+
+  private async signForgotPasswordToken(user_id: string): Promise<string> {
+    const token = await signToken({
+      payload: {
+        user_id,
+        token_type: TokenType.ForgotPasswordToken,
+      },
+      secretOrPrivateKey: process.env.FORGOT_PASSWORD_TOKEN_SECRET as string,
+      options: {
+        expiresIn: process.env.FORGOT_PASSWORD_TOKEN_EXPIRES_IN as string,
+      },
+    });
+
+    return token;
+  }
+
   /**========================================================================================================================
    * Generates a refresh token for a user.
    *
@@ -172,6 +199,47 @@ class AuthService {
     );
 
     return { refresh_token, access_token };
+  }
+
+  /**========================================================================================================================
+   * Authenticates a user
+   * & Generates refresh token and access token.
+   *
+   * @param {string} payload.email - The email address provided by the user.
+   *
+   * @returns {Promise<void>} - Returns nothing.
+   *
+   * @throws {Error} if any database side errors occur.
+   */
+
+  async forgotPassword(email: string): Promise<void> {
+    const user = await databaseService.users.findOne({ email });
+
+    if (!user) {
+      throw new BaseError({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: RESPONSE_MESSAGE.EMAIL_NOT_FOUND,
+      });
+    }
+
+    const user_id = user._id.toString();
+    const forgot_password_token = await this.signForgotPasswordToken(user_id);
+
+    //TODO: send reset password link to the email
+
+    await databaseService.users.updateOne(
+      {
+        _id: user._id,
+      },
+      {
+        $set: {
+          forgot_password_token,
+        },
+        $currentDate: {
+          updated_at: true,
+        },
+      },
+    );
   }
 }
 

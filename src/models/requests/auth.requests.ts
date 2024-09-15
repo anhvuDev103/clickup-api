@@ -9,3 +9,7 @@ export interface SignInRequestBody {
   email: string;
   password: string;
 }
+
+export interface ForgotPasswordRequestBody {
+  email: string;
+}
