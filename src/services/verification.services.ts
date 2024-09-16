@@ -40,7 +40,7 @@ class VerificationService {
     const otp_code = new Otp({
       code: generateOTP(),
       email,
-      exp: process.env.OTP_CODE_EXPIRES_IN as string,
+      expires_in: process.env.OTP_CODE_EXPIRES_IN as string,
     });
 
     //TODO: send OTP code to the email
@@ -52,7 +52,7 @@ class VerificationService {
       {
         $set: {
           code: otp_code.code,
-          exp: otp_code.exp,
+          expires_at: otp_code.expires_at,
         },
       },
       {

@@ -6,7 +6,9 @@ type OtpContructor = {
 
   code: string;
   email: string;
-  exp: string;
+  expires_in: string;
+
+  created_at?: Date;
 };
 
 class Otp {
@@ -14,16 +16,20 @@ class Otp {
 
   code: string;
   email: string;
-  exp: Date;
+  expires_at: Date;
+
+  created_at: Date;
 
   constructor(payload: OtpContructor) {
-    const now = new Date().valueOf();
+    const now = new Date();
 
     this._id = payload._id || new ObjectId();
 
     this.code = payload.code;
     this.email = payload.email;
-    this.exp = new Date(now + ms(payload.exp));
+    this.expires_at = new Date(now.valueOf() + ms(payload.expires_in));
+
+    this.created_at = payload.created_at || now;
   }
 }
 

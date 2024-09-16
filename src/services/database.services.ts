@@ -31,10 +31,10 @@ class DatabaseService {
   }
 
   private async indexOtp() {
-    const isExists = await this.otps.indexExists('exp_1');
+    const isExists = await this.otps.indexExists('expires_at_1');
 
     if (!isExists) {
-      const index = await this.otps.createIndex({ exp: 1 }, { expireAfterSeconds: 0 });
+      const index = await this.otps.createIndex({ expires_at: 1 }, { expireAfterSeconds: 0 });
 
       logger.mongoDb(`Index for ${index} field created successfully`);
     }
