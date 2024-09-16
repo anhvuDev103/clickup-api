@@ -53,6 +53,7 @@ class VerificationService {
         $set: {
           code: otp_code.code,
           expires_at: otp_code.expires_at,
+          created_at: otp_code.created_at,
         },
       },
       {

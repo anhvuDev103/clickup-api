@@ -2,7 +2,8 @@ import { Collection, Db, MongoClient } from 'mongodb';
 
 import Otp from '@/models/schemas/Otp.schema';
 import RefreshToken from '@/models/schemas/RefreshToken.schema';
-import User from '@/models/schemas/User.shema';
+import User from '@/models/schemas/User.schema';
+import Workspace from '@/models/schemas/Workspace.schema';
 import { logger } from '@/utils/logger';
 
 const CONNECTION_UI = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@clickup.nssxu.mongodb.net/?retryWrites=true&w=majority&appName=Clickup`;
@@ -72,6 +73,10 @@ class DatabaseService {
 
   get otps(): Collection<Otp> {
     return this.db.collection(process.env.MONGO_OTP_COLLECTION_NAME as string);
+  }
+
+  get workspaces(): Collection<Workspace> {
+    return this.db.collection(process.env.MONGO_WORKSPACES_COLLECTION_NAME as string);
   }
 }
 

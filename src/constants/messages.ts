@@ -26,7 +26,9 @@ export const RESPONSE_MESSAGE = {
 
   //Error
   EMAIL_NOT_FOUND: 'Email not found.',
+  WORKSPACE_NOT_FOUND: 'Workspace not found.',
   VALIDATION_FAILED: 'Validation failed for the request payload.',
   EMAIL_NOT_VERIFIED_YET: 'Email not verified yet.',
   USER_NOT_FOUND: 'User not found.',
+  MEMBERS_MUST_BE_AN_EMAIL_ARRAY: 'Members must be an email array',
 };

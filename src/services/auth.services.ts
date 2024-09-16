@@ -6,7 +6,7 @@ import { BaseError } from '@/models/Errors.model';
 import { SignUpRequestBody } from '@/models/requests/auth.requests';
 import { SignInResponseResponse, SignUpResponseResponse } from '@/models/responses/auth.responses';
 import RefreshToken from '@/models/schemas/RefreshToken.schema';
-import User from '@/models/schemas/User.shema';
+import User from '@/models/schemas/User.schema';
 import { hashPassword } from '@/utils/crypto';
 import { signToken, TokenPayload, verifyToken } from '@/utils/jwt';
 

@@ -12,7 +12,7 @@ import {
   SignUpRequestBody,
 } from '@/models/requests/auth.requests';
 import { BaseResponse } from '@/models/Response.model';
-import User from '@/models/schemas/User.shema';
+import User from '@/models/schemas/User.schema';
 import authService from '@/services/auth.services';
 import { TokenPayload } from '@/utils/jwt';
 
