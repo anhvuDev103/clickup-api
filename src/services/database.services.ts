@@ -2,6 +2,7 @@ import { Collection, Db, MongoClient } from 'mongodb';
 
 import Otp from '@/models/schemas/Otp.schema';
 import RefreshToken from '@/models/schemas/RefreshToken.schema';
+import Space from '@/models/schemas/Space.schema';
 import User from '@/models/schemas/User.schema';
 import Workspace from '@/models/schemas/Workspace.schema';
 import { logger } from '@/utils/logger';
@@ -77,6 +78,10 @@ class DatabaseService {
 
   get workspaces(): Collection<Workspace> {
     return this.db.collection(process.env.MONGO_WORKSPACES_COLLECTION_NAME as string);
+  }
+
+  get spaces(): Collection<Space> {
+    return this.db.collection(process.env.MONGO_SPACES_COLLECTION_NAME as string);
   }
 }
 
