@@ -2,6 +2,7 @@ export interface SignUpRequestBody {
   name: string;
   email: string;
   password: string;
+  otp_code: string;
 }
 
 export interface SignInRequestBody {
@@ -11,4 +12,14 @@ export interface SignInRequestBody {
 
 export interface LogOutRequestBody {
   refresh_token: string;
+}
+
+export interface ForgotPasswordRequestBody {
+  email: string;
+}
+
+export interface ResetPasswordRequestBody {
+  forgot_password_token: string;
+  password: string;
+  confirm_password: string;
 }

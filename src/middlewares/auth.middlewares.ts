@@ -19,6 +19,40 @@ import { hashPassword } from '@/utils/crypto';
 import { TokenPayload, verifyToken } from '@/utils/jwt';
 import { getCustomMessage, getInvalidMessage, getRequiredMessage, validate } from '@/utils/validate';
 
+const passwordValidatorSchema = (field = 'password') => {
+  return {
+    notEmpty: {
+      errorMessage: getRequiredMessage(field),
+    },
+    custom: {
+      options: (value: string) => {
+        //At least 8 characters
+        if (value.length < 8) {
+          throw new Error(getCustomMessage(field, 'must be 8 characters or longer'));
+        }
+
+        //At least 1 lowercase letter
+        if (!CONTAIN_LOWERCASE_CHARACTERS_REGEX.test(value)) {
+          throw new Error(getCustomMessage(field, 'must contain at least one lowercase letter'));
+        }
+
+        //At least 1 capital letter
+        if (!CONTAIN_UPPERCASE_CHARACTERS_REGEX.test(value)) {
+          throw new Error(getCustomMessage(field, 'must contain at least one capital letter'));
+        }
+
+        //contain 1 special character or 1 number
+        if (!CONTAIN_NUMBERS_REGEX.test(value) && !CONTAIN_SPECIAL_CHARACTERS_REGEX.test(value)) {
+          throw new Error(getCustomMessage(field, 'must contain at least one special character or one number'));
+        }
+
+        return true;
+      },
+    },
+    trim: true,
+  };
+};
+
 export const signUpValidator = validate(
   checkSchema(
     {
@@ -37,36 +71,20 @@ export const signUpValidator = validate(
         },
         trim: true,
       },
-      password: {
+      password: passwordValidatorSchema(),
+      otp_code: {
         notEmpty: {
-          errorMessage: getRequiredMessage('password'),
+          errorMessage: getRequiredMessage('otp_code'),
         },
-        custom: {
-          options: (value: string) => {
-            //At least 8 characters
-            if (value.length < 8) {
-              throw new Error(getCustomMessage('password', 'must be 8 characters or longer'));
-            }
-
-            //At least 1 lowercase letter
-            if (!CONTAIN_LOWERCASE_CHARACTERS_REGEX.test(value)) {
-              throw new Error(getCustomMessage('password', 'must contain at least one lowercase letter'));
-            }
-
-            //At least 1 capital letter
-            if (!CONTAIN_UPPERCASE_CHARACTERS_REGEX.test(value)) {
-              throw new Error(getCustomMessage('password', 'must contain at least one capital letter'));
-            }
-
-            //contain 1 special character or 1 number
-            if (!CONTAIN_NUMBERS_REGEX.test(value) && !CONTAIN_SPECIAL_CHARACTERS_REGEX.test(value)) {
-              throw new Error(
-                getCustomMessage('password', 'must contain at least one special character or one number'),
-              );
-            }
-
-            return true;
+        isNumeric: {
+          errorMessage: getInvalidMessage('otp_code'),
+        },
+        isLength: {
+          options: {
+            min: 4,
+            max: 4,
           },
+          errorMessage: getCustomMessage('otp_code', 'must be 4 characters'),
         },
         trim: true,
       },
@@ -140,6 +158,70 @@ export const refreshTokenValidator = validate(
                 status: HTTP_STATUS.UNAUTHORIZED,
                 message: RESPONSE_MESSAGE.REFRESH_TOKEN_DOES_NOT_EXIST,
               });
+            }
+
+            return true;
+          },
+        },
+      },
+    },
+    ['body'],
+  ),
+);
+
+export const resetPasswordValidator = validate(
+  checkSchema(
+    {
+      forgot_password_token: {
+        notEmpty: {
+          errorMessage: getRequiredMessage('forgot_password_token'),
+        },
+        isJWT: {
+          errorMessage: getInvalidMessage('forgot_password_token'),
+        },
+        custom: {
+          options: async (value: string, { req }) => {
+            try {
+              const decoded_forgot_password = await verifyToken({
+                token: value,
+                secretOrPublicKey: process.env.FORGOT_PASSWORD_TOKEN_SECRET as string,
+              });
+
+              const user = await databaseService.users.findOne({ _id: new ObjectId(decoded_forgot_password.user_id) });
+
+              if (!user) {
+                throw new BaseError({
+                  status: HTTP_STATUS.NOT_FOUND,
+                  message: RESPONSE_MESSAGE.USER_NOT_FOUND,
+                });
+              }
+
+              (req as Request).decoded_forgot_password = decoded_forgot_password;
+
+              return true;
+            } catch (err) {
+              if (err instanceof JsonWebTokenError) {
+                throw new BaseError({
+                  status: HTTP_STATUS.UNAUTHORIZED,
+                  message: _.capitalize(err.message),
+                });
+              }
+
+              throw err;
+            }
+          },
+        },
+        trim: true,
+      },
+      password: passwordValidatorSchema(),
+      confirm_password: {
+        ...passwordValidatorSchema('confirm_password'),
+        custom: {
+          options: (value: string, { req }) => {
+            const { password } = req.body;
+
+            if (hashPassword(value) !== hashPassword(password)) {
+              throw new Error(RESPONSE_MESSAGE.PASSWORD_DOES_NOT_MATCH);
             }
 
             return true;

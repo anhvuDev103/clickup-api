@@ -1,17 +1,45 @@
 import { DeleteResult, ObjectId } from 'mongodb';
 
 import { TokenType } from '@/constants/enums';
+import HTTP_STATUS from '@/constants/http-status';
+import { RESPONSE_MESSAGE } from '@/constants/messages';
+import { BaseError } from '@/models/Errors.model';
 import { SignUpRequestBody } from '@/models/requests/auth.requests';
 import { SignInResponseResponse, SignUpResponseResponse } from '@/models/responses/auth.responses';
 import RefreshToken from '@/models/schemas/RefreshToken.schema';
 import User from '@/models/schemas/User.shema';
-import { generateOTP } from '@/utils/common';
 import { hashPassword } from '@/utils/crypto';
 import { signToken, TokenPayload, verifyToken } from '@/utils/jwt';
 
 import databaseService from './database.services';
+import verificationService from './verification.services';
 
 class AuthService {
+  /**========================================================================================================================
+   * Generates a forgot password token for a user.
+   *
+   * @param {string} user_id - The id of user.
+   *
+   * @returns {Promise<string>} - A signed refresh token.
+   *
+   * @throws {Error} if jwt sign token failed.
+   */
+
+  private async signForgotPasswordToken(user_id: string): Promise<string> {
+    const token = await signToken({
+      payload: {
+        user_id,
+        token_type: TokenType.ForgotPasswordToken,
+      },
+      secretOrPrivateKey: process.env.FORGOT_PASSWORD_TOKEN_SECRET as string,
+      options: {
+        expiresIn: process.env.FORGOT_PASSWORD_TOKEN_EXPIRES_IN as string,
+      },
+    });
+
+    return token;
+  }
+
   /**========================================================================================================================
    * Generates a refresh token for a user.
    *
@@ -114,13 +142,17 @@ class AuthService {
    */
 
   async signUp(payload: SignUpRequestBody): Promise<SignUpResponseResponse> {
-    //TODO: send OTP to user's email
-    //TODO: Validate unique email on the database side
+    const { otp_code, ..._payload } = payload;
+
+    await verificationService.verifyEmail({
+      email: payload.email,
+      otp_code,
+    });
+
     const result = await databaseService.users.insertOne(
       new User({
-        ...payload,
-        otp_code: generateOTP(4),
-        password: hashPassword(payload.password),
+        ..._payload,
+        password: hashPassword(_payload.password),
       }),
     );
 
@@ -186,6 +218,84 @@ class AuthService {
       token: refresh_token,
       user_id: new ObjectId(user_id),
     });
+  }
+
+  /**========================================================================================================================
+   * Send a link request to reset password to user's email
+   *
+   * @param {string} email - The email address provided by the user.
+   *
+   * @returns {Promise<void>} - Returns nothing.
+   *
+   * @throws {Error} if any database side errors occur.
+   */
+
+  async forgotPassword(email: string): Promise<void> {
+    const user = await databaseService.users.findOne({ email });
+
+    if (!user) {
+      throw new BaseError({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: RESPONSE_MESSAGE.EMAIL_NOT_FOUND,
+      });
+    }
+
+    const user_id = user._id.toString();
+    const forgot_password_token = await this.signForgotPasswordToken(user_id);
+
+    //TODO: send reset password link to the email
+    console.log('>> Check | forgot_password_token:', forgot_password_token);
+
+    await databaseService.users.updateOne(
+      {
+        _id: user._id,
+      },
+      {
+        $set: {
+          forgot_password_token,
+        },
+        $currentDate: {
+          updated_at: true,
+        },
+      },
+    );
+  }
+
+  /**========================================================================================================================
+   * Reset the password for user
+   *
+   * @param {string} user_id - The user'id decoded from forgot_password_token.
+   * @param {string} password - The new password provided by the user.
+   *
+   * @returns {Promise<void>} - Returns nothing.
+   *
+   * @throws {Error} if any database side errors occur.
+   */
+
+  async resetPassword(user_id: string, password: string): Promise<void> {
+    const user = await databaseService.users.findOne({ _id: new ObjectId(user_id) });
+
+    if (!user) {
+      throw new BaseError({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: RESPONSE_MESSAGE.USER_NOT_FOUND,
+      });
+    }
+
+    await databaseService.users.updateOne(
+      {
+        _id: user._id,
+      },
+      {
+        $set: {
+          forgot_password_token: '',
+          password: hashPassword(password),
+        },
+        $currentDate: {
+          updated_at: true,
+        },
+      },
+    );
   }
 }
 
