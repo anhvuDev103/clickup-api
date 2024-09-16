@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb';
+import { DeleteResult, ObjectId } from 'mongodb';
 
 import { TokenType } from '@/constants/enums';
 import { SignUpRequestBody } from '@/models/requests/auth.requests';
@@ -167,6 +167,25 @@ class AuthService {
     );
 
     return { refresh_token, access_token };
+  }
+
+  /**========================================================================================================================
+   * Logs out the user
+   * & Invalidating the refresh token.
+   *
+   * @param {string} user_id - The id of current user.
+   * @param {string} refresh_token - The refresh token of user.
+   *
+   * @returns {Promise<void>} - No returns.
+   *
+   * @throws {Error} if any database side errors occur.
+   */
+
+  async logout(user_id: string, refresh_token: string) {
+    await databaseService.refreshTokens.deleteOne({
+      token: refresh_token,
+      user_id: new ObjectId(user_id),
+    });
   }
 }
 

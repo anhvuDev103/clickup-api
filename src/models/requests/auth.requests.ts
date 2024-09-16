@@ -8,3 +8,7 @@ export interface SignInRequestBody {
   email: string;
   password: string;
 }
+
+export interface LogOutRequestBody {
+  refresh_token: string;
+}
