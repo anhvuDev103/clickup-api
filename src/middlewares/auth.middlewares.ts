@@ -19,7 +19,7 @@ import { hashPassword } from '@/utils/crypto';
 import { TokenPayload, verifyToken } from '@/utils/jwt';
 import { getCustomMessage, getInvalidMessage, getRequiredMessage, validate } from '@/utils/validate';
 
-const passwordValidatorSchema = (field = 'password') => {
+const getPasswordValidatorSchema = (field = 'password') => {
   return {
     notEmpty: {
       errorMessage: getRequiredMessage(field),
@@ -71,7 +71,7 @@ export const signUpValidator = validate(
         },
         trim: true,
       },
-      password: passwordValidatorSchema(),
+      password: getPasswordValidatorSchema(),
       otp_code: {
         notEmpty: {
           errorMessage: getRequiredMessage('otp_code'),
@@ -169,6 +169,49 @@ export const refreshTokenValidator = validate(
   ),
 );
 
+export const accessTokenValidator = validate(
+  checkSchema(
+    {
+      Authorization: {
+        trim: true,
+        custom: {
+          options: async (value: string, { req }) => {
+            const [, token] = (value || '').split(' ');
+
+            if (!token) {
+              throw new BaseError({
+                status: HTTP_STATUS.UNAUTHORIZED,
+                message: getRequiredMessage('access_token'),
+              });
+            }
+
+            try {
+              const decoded_authorization = await verifyToken({
+                token,
+                secretOrPublicKey: process.env.ACCESS_TOKEN_SECRET as string,
+              });
+
+              (req as Request).decoded_authorization = decoded_authorization;
+
+              return true;
+            } catch (err) {
+              if (err instanceof JsonWebTokenError) {
+                throw new BaseError({
+                  status: HTTP_STATUS.UNAUTHORIZED,
+                  message: _.capitalize(err.message),
+                });
+              }
+
+              throw err;
+            }
+          },
+        },
+      },
+    },
+    ['headers'],
+  ),
+);
+
 export const resetPasswordValidator = validate(
   checkSchema(
     {
@@ -213,9 +256,9 @@ export const resetPasswordValidator = validate(
         },
         trim: true,
       },
-      password: passwordValidatorSchema(),
+      password: getPasswordValidatorSchema(),
       confirm_password: {
-        ...passwordValidatorSchema('confirm_password'),
+        ...getPasswordValidatorSchema('confirm_password'),
         custom: {
           options: (value: string, { req }) => {
             const { password } = req.body;
@@ -233,45 +276,42 @@ export const resetPasswordValidator = validate(
   ),
 );
 
-export const accessTokenValidator = validate(
+export const changePasswordValidator = validate(
   checkSchema(
     {
-      Authorization: {
-        trim: true,
+      current_password: {
+        notEmpty: {
+          errorMessage: getRequiredMessage('current_password'),
+        },
         custom: {
           options: async (value: string, { req }) => {
-            const [, token] = (value || '').split(' ');
+            const { user_id } = (req as Request).decoded_authorization as TokenPayload;
 
-            if (!token) {
+            const user = await databaseService.users.findOne({
+              _id: new ObjectId(user_id),
+            });
+
+            if (!user) {
+              throw new BaseError({
+                status: HTTP_STATUS.NOT_FOUND,
+                message: RESPONSE_MESSAGE.USER_NOT_FOUND,
+              });
+            }
+
+            if (user.password !== hashPassword(value)) {
               throw new BaseError({
                 status: HTTP_STATUS.UNAUTHORIZED,
-                message: getRequiredMessage('access_token'),
+                message: RESPONSE_MESSAGE.INCORRECT_PASSWORD,
               });
             }
 
-            try {
-              const decoded_authorization = await verifyToken({
-                token,
-                secretOrPublicKey: process.env.ACCESS_TOKEN_SECRET as string,
-              });
-
-              (req as Request).decoded_authorization = decoded_authorization;
-
-              return true;
-            } catch (err) {
-              if (err instanceof JsonWebTokenError) {
-                throw new BaseError({
-                  status: HTTP_STATUS.UNAUTHORIZED,
-                  message: _.capitalize(err.message),
-                });
-              }
-
-              throw err;
-            }
+            return true;
           },
         },
+        trim: true,
       },
+      new_password: getPasswordValidatorSchema('new_password'),
     },
-    ['headers'],
+    ['body'],
   ),
 );

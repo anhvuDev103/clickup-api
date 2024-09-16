@@ -273,23 +273,39 @@ class AuthService {
    */
 
   async resetPassword(user_id: string, password: string): Promise<void> {
-    const user = await databaseService.users.findOne({ _id: new ObjectId(user_id) });
-
-    if (!user) {
-      throw new BaseError({
-        status: HTTP_STATUS.NOT_FOUND,
-        message: RESPONSE_MESSAGE.USER_NOT_FOUND,
-      });
-    }
-
     await databaseService.users.updateOne(
       {
-        _id: user._id,
+        _id: new ObjectId(user_id),
       },
       {
         $set: {
           forgot_password_token: '',
           password: hashPassword(password),
+        },
+        $currentDate: {
+          updated_at: true,
+        },
+      },
+    );
+  }
+
+  /**========================================================================================================================
+   * Change the password for user
+   *
+   * @param {string} user_id - The user'id decoded from access_token.
+   * @param {string} new_password - The new password provided by the user.
+   *
+   * @returns {Promise<void>} - Returns nothing.
+   *
+   * @throws {Error} if any database side errors occur.
+   */
+
+  async changePassword(user_id: string, new_password: string): Promise<void> {
+    await databaseService.users.updateOne(
+      { _id: new ObjectId(user_id) },
+      {
+        $set: {
+          password: hashPassword(new_password),
         },
         $currentDate: {
           updated_at: true,

@@ -12,10 +12,14 @@ export const RESPONSE_MESSAGE = {
 
   //Log out
   SUCCESSFULLY_LOGGED_OUT: 'Successfully logged out.',
+
   //Reset password
   RESET_PASSWORD_LINK_HAS_BEEN_SUCCESSFULLY_SENT: 'The reset password link has been successfully sent',
   PASSWORD_DOES_NOT_MATCH: 'The confirm password does not match',
   PASSWORD_SUCCESSFULLY_RESET: 'The password successfully reset',
+
+  //Change password
+  PASSWORD_SUCCESSFULLY_CHANGED: 'The password successfully changed',
 
   //Token
   REFRESH_TOKEN_DOES_NOT_EXIST: 'This refresh token does not exist.',

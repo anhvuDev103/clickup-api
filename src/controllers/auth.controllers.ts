@@ -4,6 +4,7 @@ import { ParamsDictionary } from 'express-serve-static-core';
 import HTTP_STATUS from '@/constants/http-status';
 import { RESPONSE_MESSAGE } from '@/constants/messages';
 import {
+  ChangePasswordRequestBody,
   ForgotPasswordRequestBody,
   LogOutRequestBody,
   ResetPasswordRequestBody,
@@ -79,6 +80,22 @@ export const resetPasswordController = async (
 
   const response = new BaseResponse({
     message: RESPONSE_MESSAGE.PASSWORD_SUCCESSFULLY_RESET,
+  });
+
+  return res.status(response.status).json(response);
+};
+
+export const changePasswordController = async (
+  req: Request<ParamsDictionary, unknown, ChangePasswordRequestBody>,
+  res: Response,
+) => {
+  const { new_password } = req.body;
+  const { user_id } = req.decoded_authorization as TokenPayload;
+
+  await authService.changePassword(user_id, new_password);
+
+  const response = new BaseResponse({
+    message: RESPONSE_MESSAGE.PASSWORD_SUCCESSFULLY_CHANGED,
   });
 
   return res.status(response.status).json(response);

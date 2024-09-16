@@ -1,6 +1,7 @@
 import express from 'express';
 
 import {
+  changePasswordController,
   forgotPasswordController,
   logOutController,
   resetPasswordController,
@@ -9,6 +10,7 @@ import {
 } from '@/controllers/auth.controllers';
 import {
   accessTokenValidator,
+  changePasswordValidator,
   refreshTokenValidator,
   resetPasswordValidator,
   signInValidator,
@@ -98,5 +100,27 @@ authRouter.post('/forgot-password', emailValidator, wrapRequestHandler(forgotPas
  * - 500 Internal Server Error: If there is an issue on the database side.
  */
 authRouter.post('/reset-password', resetPasswordValidator, wrapRequestHandler(resetPasswordController));
+
+/**========================================================================================================================
+ * PATCH /auth/change-password
+ *
+ * Request body:
+ * {
+ *    current_password: string
+ *    new_password: string
+ * }
+ *
+ * Response:
+ * - 200 OK: If the password is successfully changed.
+ * - 401 Unauthorized: If the current password is incorrect.
+ * - 422 Unprocessable Entity: When input data is invalid.
+ * - 500 Internal Server Error: If there is an issue on the database side.
+ */
+authRouter.patch(
+  '/change-password',
+  accessTokenValidator,
+  changePasswordValidator,
+  wrapRequestHandler(changePasswordController),
+);
 
 export default authRouter;
