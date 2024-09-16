@@ -1,4 +1,4 @@
-import HTTP_STATUS from '@/constants/http-status';
+import { HttpStatus } from '@/constants/enums';
 import { RESPONSE_MESSAGE } from '@/constants/messages';
 import { BaseError } from '@/models/Errors.model';
 import { EmailStatusResponse } from '@/models/responses/verification.responses';
@@ -79,7 +79,7 @@ class VerificationService {
 
     if (!result) {
       throw new BaseError({
-        status: HTTP_STATUS.NOT_FOUND,
+        status: HttpStatus.NotFound,
         message: RESPONSE_MESSAGE.EMAIL_NOT_VERIFIED_YET,
       });
     }

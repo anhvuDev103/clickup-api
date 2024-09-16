@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
 
-import HTTP_STATUS from '@/constants/http-status';
+import { HttpStatus } from '@/constants/enums';
 import { RESPONSE_MESSAGE } from '@/constants/messages';
 import {
   ChangePasswordRequestBody,
@@ -20,7 +20,7 @@ export const signUpController = async (req: Request<ParamsDictionary, unknown, S
   const result = await authService.signUp(req.body);
 
   const response = new BaseResponse({
-    status: HTTP_STATUS.CREATED,
+    status: HttpStatus.Created,
     message: RESPONSE_MESSAGE.SUCCESSFULLY_SIGNED_UP,
     result,
   });

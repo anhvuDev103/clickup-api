@@ -1,7 +1,7 @@
 import { ValidationError as ExpressValidationError } from 'express-validator';
 import _ from 'lodash';
 
-import HTTP_STATUS from '@/constants/http-status';
+import { HttpStatus } from '@/constants/enums';
 
 type BaseErrorContructor = {
   status: number;
@@ -19,7 +19,7 @@ export class BaseError {
 
   constructor(payload: BaseErrorContructor) {
     this.status = payload.status;
-    this.error = _.findKey(HTTP_STATUS, (v) => v === payload.status) || 'unknown';
+    this.error = _.findKey(HttpStatus, (v) => v === payload.status) || 'unknown';
     this.message = payload.message;
   }
 }

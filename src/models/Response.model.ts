@@ -1,4 +1,4 @@
-import HTTP_STATUS from '@/constants/http-status';
+import { HttpStatus } from '@/constants/enums';
 import { RESPONSE_MESSAGE } from '@/constants/messages';
 
 type BaseResponseContructor = {
@@ -17,11 +17,11 @@ export class BaseResponse {
 
   constructor(payload?: BaseResponseContructor) {
     const _payload = payload || {
-      status: HTTP_STATUS.OK,
+      status: HttpStatus.Ok,
       message: RESPONSE_MESSAGE.SUCCESSFUL,
     };
 
-    this.status = _payload.status || HTTP_STATUS.OK;
+    this.status = _payload.status || HttpStatus.Ok;
     this.message = _payload.message || RESPONSE_MESSAGE.SUCCESSFUL;
 
     this.result = _payload.result;

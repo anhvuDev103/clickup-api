@@ -4,7 +4,7 @@ import { JsonWebTokenError } from 'jsonwebtoken';
 import _ from 'lodash';
 import { ObjectId } from 'mongodb';
 
-import HTTP_STATUS from '@/constants/http-status';
+import { HttpStatus } from '@/constants/enums';
 import { RESPONSE_MESSAGE } from '@/constants/messages';
 import {
   CONTAIN_LOWERCASE_CHARACTERS_REGEX,
@@ -117,7 +117,7 @@ export const signInValidator = validate(
 
             if (!user) {
               throw new BaseError({
-                status: HTTP_STATUS.UNAUTHORIZED,
+                status: HttpStatus.Unauthorized,
                 message: RESPONSE_MESSAGE.INCORRECT_PASSWORD,
               });
             }
@@ -155,7 +155,7 @@ export const refreshTokenValidator = validate(
 
             if (!refreshToken) {
               throw new BaseError({
-                status: HTTP_STATUS.UNAUTHORIZED,
+                status: HttpStatus.Unauthorized,
                 message: RESPONSE_MESSAGE.REFRESH_TOKEN_DOES_NOT_EXIST,
               });
             }
@@ -180,7 +180,7 @@ export const accessTokenValidator = validate(
 
             if (!token) {
               throw new BaseError({
-                status: HTTP_STATUS.UNAUTHORIZED,
+                status: HttpStatus.Unauthorized,
                 message: getRequiredMessage('access_token'),
               });
             }
@@ -197,7 +197,7 @@ export const accessTokenValidator = validate(
             } catch (err) {
               if (err instanceof JsonWebTokenError) {
                 throw new BaseError({
-                  status: HTTP_STATUS.UNAUTHORIZED,
+                  status: HttpStatus.Unauthorized,
                   message: _.capitalize(err.message),
                 });
               }
@@ -234,7 +234,7 @@ export const resetPasswordValidator = validate(
 
               if (!user) {
                 throw new BaseError({
-                  status: HTTP_STATUS.NOT_FOUND,
+                  status: HttpStatus.NotFound,
                   message: RESPONSE_MESSAGE.USER_NOT_FOUND,
                 });
               }
@@ -245,7 +245,7 @@ export const resetPasswordValidator = validate(
             } catch (err) {
               if (err instanceof JsonWebTokenError) {
                 throw new BaseError({
-                  status: HTTP_STATUS.UNAUTHORIZED,
+                  status: HttpStatus.Unauthorized,
                   message: _.capitalize(err.message),
                 });
               }
@@ -293,14 +293,14 @@ export const changePasswordValidator = validate(
 
             if (!user) {
               throw new BaseError({
-                status: HTTP_STATUS.NOT_FOUND,
+                status: HttpStatus.NotFound,
                 message: RESPONSE_MESSAGE.USER_NOT_FOUND,
               });
             }
 
             if (user.password !== hashPassword(value)) {
               throw new BaseError({
-                status: HTTP_STATUS.UNAUTHORIZED,
+                status: HttpStatus.Unauthorized,
                 message: RESPONSE_MESSAGE.INCORRECT_PASSWORD,
               });
             }

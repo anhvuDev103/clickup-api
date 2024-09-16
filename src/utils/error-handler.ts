@@ -1,6 +1,6 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express';
 
-import HTTP_STATUS from '@/constants/http-status';
+import { HttpStatus } from '@/constants/enums';
 import { BaseError } from '@/models/Errors.model';
 
 export const wrapRequestHandler = (requestHandler: RequestHandler) => {
@@ -26,9 +26,9 @@ export const defaultErrorRequestHandler = (err: any, _req: Request, res: Respons
   });
 
   const error = new BaseError({
-    status: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+    status: HttpStatus.InternalServerError,
     message: err.message,
   });
 
-  return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json(error);
+  return res.status(HttpStatus.InternalServerError).json(error);
 };

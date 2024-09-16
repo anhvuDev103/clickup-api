@@ -104,6 +104,11 @@ authRouter.post('/reset-password', resetPasswordValidator, wrapRequestHandler(re
 /**========================================================================================================================
  * PATCH /auth/change-password
  *
+ * Request headers:
+ * {
+ *    Authorization: Bearer {{access_token}}
+ * }
+ *
  * Request body:
  * {
  *    current_password: string

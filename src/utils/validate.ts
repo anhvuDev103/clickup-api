@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { ValidationChain, ValidationError as ExpressValidationError } from 'express-validator';
 import { RunnableValidationChains } from 'express-validator/lib/middlewares/schema';
 
-import HTTP_STATUS from '@/constants/http-status';
+import { HttpStatus } from '@/constants/enums';
 import { RESPONSE_MESSAGE } from '@/constants/messages';
 import { BaseError, ValidationError } from '@/models/Errors.model';
 
@@ -21,7 +21,7 @@ export const validate = (validation: RunnableValidationChains<ValidationChain>) 
       if (!error.isEmpty()) {
         const [[key, details]] = Object.entries(error.mapped());
 
-        if (details.msg instanceof BaseError && details.msg.status !== HTTP_STATUS.UNPROCESSABLE_ENTITY) {
+        if (details.msg instanceof BaseError && details.msg.status !== HttpStatus.UnprocessableEntity) {
           return next(details.msg);
         }
 
@@ -30,7 +30,7 @@ export const validate = (validation: RunnableValidationChains<ValidationChain>) 
     });
 
     const validationError = new ValidationError({
-      status: HTTP_STATUS.UNPROCESSABLE_ENTITY,
+      status: HttpStatus.UnprocessableEntity,
       message: RESPONSE_MESSAGE.VALIDATION_FAILED,
       details: errorObject,
     });

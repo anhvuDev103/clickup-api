@@ -1,7 +1,6 @@
-import { DeleteResult, ObjectId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 
-import { TokenType } from '@/constants/enums';
-import HTTP_STATUS from '@/constants/http-status';
+import { HttpStatus, TokenType } from '@/constants/enums';
 import { RESPONSE_MESSAGE } from '@/constants/messages';
 import { BaseError } from '@/models/Errors.model';
 import { SignUpRequestBody } from '@/models/requests/auth.requests';
@@ -235,7 +234,7 @@ class AuthService {
 
     if (!user) {
       throw new BaseError({
-        status: HTTP_STATUS.NOT_FOUND,
+        status: HttpStatus.NotFound,
         message: RESPONSE_MESSAGE.EMAIL_NOT_FOUND,
       });
     }
