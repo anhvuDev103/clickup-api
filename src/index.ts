@@ -6,6 +6,7 @@ import express from 'express';
 import authRouter from './routes/auth.routes';
 import usersRouter from './routes/user.routes';
 import verificationRouter from './routes/verification.routes';
+import workspacesRouter from './routes/workspaces.routes';
 import databaseService from './services/database.services';
 import { defaultErrorRequestHandler } from './utils/error-handler';
 import { logger } from './utils/logger';
@@ -29,6 +30,7 @@ app.use(cors());
 app.use('/verification', verificationRouter);
 app.use('/auth', authRouter);
 app.use('/users', usersRouter);
+app.use('/workspaces', workspacesRouter);
 
 app.use(defaultErrorRequestHandler);
 

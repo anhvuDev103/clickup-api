@@ -17,6 +17,7 @@ class VerificationService {
    *
    * @throws {Error} if any database side errors occur.
    */
+
   async getEmailStatus(email: string): Promise<EmailStatusResponse> {
     const existingUser = await databaseService.users.findOne({ email });
 
@@ -36,6 +37,7 @@ class VerificationService {
    *
    * @throws {Error} if any database side errors occur.
    */
+
   async sendOtp(email: string): Promise<void> {
     const otp_code = new Otp({
       code: generateOTP(),
@@ -72,6 +74,7 @@ class VerificationService {
    *
    * @throws {Error} if any database side errors occur.
    */
+
   async verifyEmail({ email, otp_code }: { email: string; otp_code: string }): Promise<void> {
     const result = await databaseService.otps.findOneAndDelete({
       email,
