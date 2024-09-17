@@ -53,7 +53,7 @@ class WorkspacesService {
    * @param {user_id} user_id - The id of user.
    * @param {Object} payload - An object containing workspace create information.
    * @param {string} payload.name - The name workspace provided by the user.
-   * @param {Array} payload.member_emails - The user's password.
+   * @param {Array} payload.member_emails - The emails of the space members, provided by the user.
    *
    * @returns {Promise<void>} - Returns nothing.
    *

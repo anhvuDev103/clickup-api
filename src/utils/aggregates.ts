@@ -7,15 +7,6 @@ export const getProfileAggregate = (user_id: string) => [
     },
   },
   {
-    $project: {
-      password: 0,
-      refresh_token: 0,
-      forgot_password_token: 0,
-      created_at: 0,
-      updated_at: 0,
-    },
-  },
-  {
     $lookup: {
       from: 'workspaces',
       localField: '_id',
@@ -51,8 +42,47 @@ export const getProfileAggregate = (user_id: string) => [
     },
   },
   {
+    $unwind: {
+      path: '$workspaces',
+    },
+  },
+  {
+    $lookup: {
+      as: 'workspaces.members',
+      from: 'users',
+      foreignField: '_id',
+      localField: 'workspaces.member_ids',
+    },
+  },
+  {
+    $group: {
+      _id: '$_id',
+      name: {
+        $first: '$name',
+      },
+      email: {
+        $first: '$email',
+      },
+      description: {
+        $first: '$description',
+      },
+      workspaces: {
+        $push: '$workspaces',
+      },
+    },
+  },
+  {
     $project: {
-      collab_workspaces: 0,
+      workspaces: {
+        member_ids: 0,
+        members: {
+          password: 0,
+          refresh_token: 0,
+          forgot_password_token: 0,
+          created_at: 0,
+          updated_at: 0,
+        },
+      },
     },
   },
 ];

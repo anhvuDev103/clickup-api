@@ -8,6 +8,7 @@ type SpaceContructor = {
   is_private: boolean;
   owner_id: ObjectId;
   workspace_id: ObjectId;
+  member_emails: string[];
 
   created_at?: Date;
   updated_at?: Date;
@@ -21,6 +22,7 @@ class Space {
   is_private: boolean;
   owner_id: ObjectId;
   workspace_id: ObjectId;
+  member_emails: string[];
 
   created_at: Date;
   updated_at: Date;
@@ -35,6 +37,7 @@ class Space {
     this.is_private = payload.is_private;
     this.owner_id = payload.owner_id;
     this.workspace_id = payload.workspace_id;
+    this.member_emails = payload.member_emails;
 
     this.created_at = payload.created_at || now;
     this.updated_at = payload.updated_at || now;

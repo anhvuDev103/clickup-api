@@ -24,6 +24,7 @@ const workspacesRouter = express.Router();
  * Response:
  * - 200 OK: On successful creation of workspace.
  * - 404 Not Found: If the user associated with the token is not found.
+ * - 422 Unprocessable Entity: When input data is invalid.
  * - 500 Internal Server Error: If there is an issue on the database side.
  */
 workspacesRouter.post(
