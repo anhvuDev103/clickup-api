@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { ValidationChain, ValidationError as ExpressValidationError } from 'express-validator';
 import { RunnableValidationChains } from 'express-validator/lib/middlewares/schema';
+import _ from 'lodash';
 
 import { HttpStatus } from '@/constants/enums';
 import { RESPONSE_MESSAGE } from '@/constants/messages';
@@ -25,7 +26,7 @@ export const validate = (validation: RunnableValidationChains<ValidationChain>) 
           return next(details.msg);
         }
 
-        errorObject[key] = details;
+        errorObject[key] = _.pick(details, ['value', 'msg']) as ExpressValidationError;
       }
     });
 

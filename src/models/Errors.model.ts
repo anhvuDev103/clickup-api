@@ -29,6 +29,7 @@ export class ValidationError extends BaseError {
 
   constructor({ details, ...payload }: ValidationErrorContructor) {
     super(payload);
+
     this.details = details;
   }
 }
