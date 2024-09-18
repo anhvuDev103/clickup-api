@@ -9,17 +9,7 @@ export const getProfileAggregate = (user_id: string) => [
   {
     $lookup: {
       from: 'workspaces',
-      localField: '_id',
-      foreignField: 'owner_id',
       as: 'workspaces',
-    },
-  },
-  {
-    $lookup: {
-      from: 'workspaces',
-      localField: '_id',
-      foreignField: 'member_ids',
-      as: 'collab_workspaces',
       let: {
         user_id: '$_id',
       },
@@ -27,18 +17,18 @@ export const getProfileAggregate = (user_id: string) => [
         {
           $match: {
             $expr: {
-              $in: ['$$user_id', '$member_ids'],
+              $or: [
+                {
+                  $in: ['$$user_id', '$member_ids'],
+                },
+                {
+                  $eq: ['$$user_id', '$owner_id'],
+                },
+              ],
             },
           },
         },
       ],
-    },
-  },
-  {
-    $addFields: {
-      workspaces: {
-        $setUnion: ['$collab_workspaces', '$workspaces'],
-      },
     },
   },
   {
@@ -52,6 +42,23 @@ export const getProfileAggregate = (user_id: string) => [
       from: 'users',
       foreignField: '_id',
       localField: 'workspaces.member_ids',
+    },
+  },
+  {
+    $lookup: {
+      as: 'workspaces.owner',
+      from: 'users',
+      foreignField: '_id',
+      localField: 'workspaces.owner_id',
+    },
+  },
+  {
+    $addFields: {
+      workspaces: {
+        owner: {
+          $arrayElemAt: ['$workspaces.owner', 0],
+        },
+      },
     },
   },
   {
@@ -75,7 +82,15 @@ export const getProfileAggregate = (user_id: string) => [
     $project: {
       workspaces: {
         member_ids: 0,
+        owner_id: 0,
         members: {
+          password: 0,
+          refresh_token: 0,
+          forgot_password_token: 0,
+          created_at: 0,
+          updated_at: 0,
+        },
+        owner: {
           password: 0,
           refresh_token: 0,
           forgot_password_token: 0,
