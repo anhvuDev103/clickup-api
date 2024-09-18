@@ -2,7 +2,7 @@ import express from 'express';
 
 import { createWorkspaceController, getWorkspaceController } from '@/controllers/workspaces.controllers';
 import { accessTokenValidator } from '@/middlewares/auth.middlewares';
-import { createWorkspaceValidator } from '@/middlewares/workspaces.middlewares';
+import { createWorkspaceValidator, getWorkspaceValidator } from '@/middlewares/workspaces.middlewares';
 import { wrapRequestHandler } from '@/utils/error-handler';
 
 const workspacesRouter = express.Router();
@@ -48,10 +48,10 @@ workspacesRouter.post(
  * }
  *
  * Response:
- * - 200 OK: Returns GetWorkspacesResponseResponse.
+ * - 200 OK: Returns GetWorkspacesResponse.
  * - 404 Not Found: If the user associated with the token is not found.
  * - 500 Internal Server Error: If there is an issue on the database side.
  */
-workspacesRouter.get('/:id', accessTokenValidator, wrapRequestHandler(getWorkspaceController));
+workspacesRouter.get('/:id', accessTokenValidator, getWorkspaceValidator, wrapRequestHandler(getWorkspaceController));
 
 export default workspacesRouter;

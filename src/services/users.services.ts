@@ -1,7 +1,7 @@
 import { HttpStatus } from '@/constants/enums';
 import { RESPONSE_MESSAGE } from '@/constants/messages';
 import { BaseError } from '@/models/Errors.model';
-import { GetProfileResponseResponse } from '@/models/responses/users.responses';
+import { SimpleProfileResponse } from '@/models/responses/users.responses';
 import { getProfileAggregate } from '@/utils/aggregates';
 
 import databaseService from './database.services';
@@ -12,15 +12,13 @@ class UsersService {
    *
    * @param {string} user_id - The id of user.
    *
-   * @returns {Promise<GetProfileResponseResponse>} - A promise that resolves with the profile infomation if successful.
+   * @returns {Promise<SimpleProfileResponse>} - A promise that resolves with the profile infomation if successful.
    *
    * @throws {Error} if any database side errors occur.
    */
 
-  async getProfile(user_id: string): Promise<GetProfileResponseResponse> {
-    const [user] = await databaseService.users
-      .aggregate<GetProfileResponseResponse>(getProfileAggregate(user_id))
-      .toArray();
+  async getProfile(user_id: string): Promise<SimpleProfileResponse> {
+    const [user] = await databaseService.users.aggregate<SimpleProfileResponse>(getProfileAggregate(user_id)).toArray();
 
     if (!user) {
       throw new BaseError({

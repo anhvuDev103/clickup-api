@@ -2,7 +2,7 @@ import { checkSchema } from 'express-validator';
 import { isEmail } from 'validator';
 
 import { RESPONSE_MESSAGE } from '@/constants/messages';
-import { getRequiredMessage, validate } from '@/utils/validate';
+import { getInvalidMessage, getRequiredMessage, validate } from '@/utils/validate';
 
 export const createWorkspaceValidator = validate(
   checkSchema(
@@ -26,5 +26,22 @@ export const createWorkspaceValidator = validate(
       },
     },
     ['body'],
+  ),
+);
+
+export const getWorkspaceValidator = validate(
+  checkSchema(
+    {
+      id: {
+        notEmpty: {
+          errorMessage: getRequiredMessage('id'),
+        },
+        isMongoId: {
+          errorMessage: getInvalidMessage('id'),
+        },
+        trim: true,
+      },
+    },
+    ['params'],
   ),
 );

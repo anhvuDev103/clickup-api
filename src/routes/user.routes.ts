@@ -15,7 +15,7 @@ const usersRouter = express.Router();
  * }
  *
  * Response:
- * - 200 OK: Returns GetProfileResponseResponse.
+ * - 200 OK: Returns SimpleProfileResponse.
  * - 404 Not Found: If the user associated with the token is not found.
  * - 500 Internal Server Error: If there is an issue on the database side.
  */

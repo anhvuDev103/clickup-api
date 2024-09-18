@@ -4,7 +4,7 @@ import { HttpStatus, TokenType } from '@/constants/enums';
 import { RESPONSE_MESSAGE } from '@/constants/messages';
 import { BaseError } from '@/models/Errors.model';
 import { SignUpRequestBody } from '@/models/requests/auth.requests';
-import { SignInResponseResponse, SignUpResponseResponse } from '@/models/responses/auth.responses';
+import { SignInResponse, SignUpResponse } from '@/models/responses/auth.responses';
 import RefreshToken from '@/models/schemas/RefreshToken.schema';
 import User from '@/models/schemas/User.schema';
 import { hashPassword } from '@/utils/crypto';
@@ -135,12 +135,12 @@ class AuthService {
    * @param {string} payload.email - The unique email address.
    * @param {string} payload.password - The user's password.
    *
-   * @returns {Promise<SignUpResponseResponse>} - A promise that resolves with the created user object if successful.
+   * @returns {Promise<SignUpResponse>} - A promise that resolves with the created user object if successful.
    *
    * @throws {Error} if any database side errors occur.
    */
 
-  async signUp(payload: SignUpRequestBody): Promise<SignUpResponseResponse> {
+  async signUp(payload: SignUpRequestBody): Promise<SignUpResponse> {
     const { otp_code, ..._payload } = payload;
 
     await verificationService.verifyEmail({
@@ -179,12 +179,12 @@ class AuthService {
    * @param {string} payload.email - The email address provided by the user.
    * @param {string} payload.password - The password provided by the user.
    *
-   * @returns {Promise<SignInResponseResponse>} - A promise that resolves with the created user object if successful.
+   * @returns {Promise<SignInResponse>} - A promise that resolves with the created user object if successful.
    *
    * @throws {Error} if any database side errors occur.
    */
 
-  async signIn(user_id: string): Promise<SignInResponseResponse> {
+  async signIn(user_id: string): Promise<SignInResponse> {
     const [refresh_token, access_token] = await this.signRefreshAndAccessToken(user_id);
 
     const decodedRefreshToken = await this.decodeRefreshToken(refresh_token);

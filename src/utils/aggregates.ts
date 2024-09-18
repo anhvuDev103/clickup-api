@@ -1,6 +1,6 @@
-import { ObjectId } from 'mongodb';
+import { Document, ObjectId } from 'mongodb';
 
-export const getProfileAggregate = (user_id: string) => [
+export const getProfileAggregate = (user_id: string): Document[] => [
   {
     $match: {
       _id: new ObjectId(user_id),
@@ -101,3 +101,66 @@ export const getProfileAggregate = (user_id: string) => [
     },
   },
 ];
+
+export const getWorkspaceAggregate = (user_id: string, workspace_id: string): Document[] => {
+  const objectUserId = new ObjectId(user_id);
+
+  return [
+    {
+      $match: {
+        _id: new ObjectId(workspace_id),
+        $or: [
+          {
+            member_ids: {
+              $in: [objectUserId],
+            },
+          },
+          {
+            owner_id: objectUserId,
+          },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'owner_id',
+        foreignField: '_id',
+        as: 'owner',
+      },
+    },
+    {
+      $unwind: {
+        path: '$owner',
+      },
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'member_ids',
+        foreignField: '_id',
+        as: 'members',
+      },
+    },
+    {
+      $project: {
+        owner_id: 0,
+        member_ids: 0,
+        owner: {
+          password: 0,
+          refresh_token: 0,
+          forgot_password_token: 0,
+          created_at: 0,
+          updated_at: 0,
+        },
+        members: {
+          password: 0,
+          refresh_token: 0,
+          forgot_password_token: 0,
+          created_at: 0,
+          updated_at: 0,
+        },
+      },
+    },
+  ];
+};

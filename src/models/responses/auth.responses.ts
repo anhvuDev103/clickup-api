@@ -1,9 +1,9 @@
-export interface SignUpResponseResponse {
+export interface SignUpResponse {
   refresh_token: string;
   access_token: string;
 }
 
-export interface SignInResponseResponse {
+export interface SignInResponse {
   refresh_token: string;
   access_token: string;
 }

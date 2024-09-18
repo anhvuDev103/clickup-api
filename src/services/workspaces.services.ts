@@ -4,7 +4,9 @@ import { HttpStatus } from '@/constants/enums';
 import { RESPONSE_MESSAGE } from '@/constants/messages';
 import { BaseError } from '@/models/Errors.model';
 import { CreateWorkspaceRequestBody } from '@/models/requests/workspaces.requests';
+import { GetWorkspaceResponse } from '@/models/responses/workspaces.responses';
 import Workspace from '@/models/schemas/Workspace.schema';
+import { getWorkspaceAggregate } from '@/utils/aggregates';
 
 import databaseService from './database.services';
 
@@ -15,27 +17,15 @@ class WorkspacesService {
    * @param {string} user_id - The id of user.
    * @param {string} workspace_id - The id of workspace.
    *
-   * @returns {Promise<WithId<Workspace>>} - A promise that resolves with the profile infomation if successful.
+   * @returns {Promise<GetWorkspaceResponse>} - A promise that resolves with the profile infomation if successful.
    *
    * @throws {Error} if any database side errors occur.
    */
 
-  async getWorkspace(user_id: string, workspace_id: string): Promise<WithId<Workspace>> {
-    const objectUserId = new ObjectId(user_id);
-
-    const workspace = await databaseService.workspaces.findOne({
-      _id: new ObjectId(workspace_id),
-      $or: [
-        {
-          member_ids: {
-            $in: [objectUserId],
-          },
-        },
-        {
-          owner_id: objectUserId,
-        },
-      ],
-    });
+  async getWorkspace(user_id: string, workspace_id: string): Promise<GetWorkspaceResponse> {
+    const [workspace] = await databaseService.workspaces
+      .aggregate<GetWorkspaceResponse>(getWorkspaceAggregate(user_id, workspace_id))
+      .toArray();
 
     if (!workspace) {
       throw new BaseError({
