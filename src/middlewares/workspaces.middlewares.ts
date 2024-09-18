@@ -4,6 +4,8 @@ import { isEmail } from 'validator';
 import { RESPONSE_MESSAGE } from '@/constants/messages';
 import { getInvalidMessage, getRequiredMessage, validate } from '@/utils/validate';
 
+import { getObjectIdValidatorSchema } from './shared.middlewares';
+
 export const createWorkspaceValidator = validate(
   checkSchema(
     {
@@ -32,15 +34,7 @@ export const createWorkspaceValidator = validate(
 export const getWorkspaceValidator = validate(
   checkSchema(
     {
-      id: {
-        notEmpty: {
-          errorMessage: getRequiredMessage('id'),
-        },
-        isMongoId: {
-          errorMessage: getInvalidMessage('id'),
-        },
-        trim: true,
-      },
+      id: getObjectIdValidatorSchema(),
     },
     ['params'],
   ),

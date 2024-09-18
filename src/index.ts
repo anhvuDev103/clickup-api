@@ -4,7 +4,7 @@ import cors from 'cors';
 import express from 'express';
 
 import authRouter from './routes/auth.routes';
-import spacesRouter from './routes/spaces.routes';
+import hierarchyRouter from './routes/hierarchy.routes';
 import usersRouter from './routes/user.routes';
 import verificationRouter from './routes/verification.routes';
 import workspacesRouter from './routes/workspaces.routes';
@@ -33,7 +33,7 @@ app.use('/auth', authRouter);
 app.use('/users', usersRouter);
 
 app.use('/workspaces', workspacesRouter);
-app.use('/spaces', spacesRouter);
+app.use('/hierarchy', hierarchyRouter);
 
 app.use(defaultErrorRequestHandler);
 

@@ -1,14 +1,14 @@
 import express from 'express';
 
-import { createSpaceController } from '@/controllers/spaces.controllers';
+import { createSpaceController } from '@/controllers/hierarchy.controllers';
 import { accessTokenValidator } from '@/middlewares/auth.middlewares';
-import { createSpaceValidator } from '@/middlewares/spaces.middlewares';
+import { createSpaceValidator } from '@/middlewares/hierarchy.middlewares';
 import { wrapRequestHandler } from '@/utils/error-handler';
 
-const spacesRouter = express.Router();
+const hierarchyRouterRouter = express.Router();
 
 /**========================================================================================================================
- * POST /spaces
+ * POST /hierarchy/space
  *
  * Request headers:
  * {
@@ -18,9 +18,10 @@ const spacesRouter = express.Router();
  * Request body:
  * {
  *    name: string
- *    description: string
+ *    description?: string
  *    is_private: boolean
  *    member_emails: string[]
+ *    workspace_id: ObjectId
  * }
  *
  * Response:
@@ -29,6 +30,11 @@ const spacesRouter = express.Router();
  * - 422 Unprocessable Entity: When input data is invalid.
  * - 500 Internal Server Error: If there is an issue on the database side.
  */
-spacesRouter.post('/', accessTokenValidator, createSpaceValidator, wrapRequestHandler(createSpaceController));
+hierarchyRouterRouter.post(
+  '/space',
+  accessTokenValidator,
+  createSpaceValidator,
+  wrapRequestHandler(createSpaceController),
+);
 
-export default spacesRouter;
+export default hierarchyRouterRouter;

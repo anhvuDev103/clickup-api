@@ -3,4 +3,5 @@ export interface CreateSpaceRequestBody {
   description: string;
   is_private: boolean;
   member_emails: string[];
+  workspace_id: string;
 }

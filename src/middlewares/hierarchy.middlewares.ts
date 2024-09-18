@@ -4,6 +4,8 @@ import { isEmail } from 'validator';
 import { RESPONSE_MESSAGE } from '@/constants/messages';
 import { getCustomMessage, getInvalidMessage, getRequiredMessage, validate } from '@/utils/validate';
 
+import { getObjectIdValidatorSchema } from './shared.middlewares';
+
 export const createSpaceValidator = validate(
   checkSchema(
     {
@@ -14,9 +16,7 @@ export const createSpaceValidator = validate(
         trim: true,
       },
       description: {
-        notEmpty: {
-          errorMessage: getRequiredMessage('description'),
-        },
+        optional: true,
         isLength: {
           errorMessage: getCustomMessage('description', 'should not go over 350 characters'),
           options: {
@@ -44,6 +44,7 @@ export const createSpaceValidator = validate(
           },
         },
       },
+      workspace_id: getObjectIdValidatorSchema('workspace_id'),
     },
     ['body'],
   ),

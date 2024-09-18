@@ -1,4 +1,4 @@
-import { Collection, Db, MongoClient } from 'mongodb';
+import { Collection, Db, MongoClient, ObjectId } from 'mongodb';
 
 import Otp from '@/models/schemas/Otp.schema';
 import RefreshToken from '@/models/schemas/RefreshToken.schema';
@@ -82,6 +82,28 @@ class DatabaseService {
 
   get spaces(): Collection<Space> {
     return this.db.collection(process.env.MONGO_SPACES_COLLECTION_NAME as string);
+  }
+
+  /**
+   * Utils
+   */
+
+  async getUserIdByExistingEmails(emails: string[], options?: { excludedEmail: string }): Promise<ObjectId[]> {
+    const { excludedEmail } = options || {};
+
+    let user_ids: ObjectId[] = [];
+
+    const users = await databaseService.users
+      .find({
+        email: {
+          $in: emails,
+        },
+      })
+      .toArray();
+
+    user_ids = users.map((user) => user._id).filter((id) => !id.equals(excludedEmail));
+
+    return user_ids;
   }
 }
 

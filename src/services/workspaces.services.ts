@@ -51,15 +51,9 @@ class WorkspacesService {
    */
 
   async createWorkspace(user_id: string, payload: CreateWorkspaceRequestBody): Promise<void> {
-    const members = await databaseService.users
-      .find({
-        email: {
-          $in: payload.member_emails,
-        },
-      })
-      .toArray();
-
-    const member_ids = members.map((member) => member._id).filter((id) => !id.equals(user_id));
+    const member_ids = await databaseService.getUserIdByExistingEmails(payload.member_emails, {
+      excludedEmail: user_id,
+    });
 
     await databaseService.workspaces.insertOne(
       new Workspace({
