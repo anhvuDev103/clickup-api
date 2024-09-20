@@ -25,9 +25,9 @@ export const RESPONSE_MESSAGE = {
   REFRESH_TOKEN_DOES_NOT_EXIST: 'This refresh token does not exist.',
 
   //Error
-  EMAIL_NOT_FOUND: 'Email not found.',
-  WORKSPACE_NOT_FOUND: 'Workspace not found.',
   VALIDATION_FAILED: 'Validation failed for the request payload.',
   EMAIL_NOT_VERIFIED_YET: 'Email not verified yet.',
+  EMAIL_NOT_FOUND: 'Email not found.',
+  WORKSPACE_NOT_FOUND: 'Workspace not found.',
   USER_NOT_FOUND: 'User not found.',
 };

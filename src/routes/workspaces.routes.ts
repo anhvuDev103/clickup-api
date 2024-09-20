@@ -2,7 +2,7 @@ import express from 'express';
 
 import { createWorkspaceController, getWorkspaceController } from '@/controllers/workspaces.controllers';
 import { accessTokenValidator } from '@/middlewares/auth.middlewares';
-import { createWorkspaceValidator, getWorkspaceValidator } from '@/middlewares/workspaces.middlewares';
+import { createWorkspaceValidator, getWorkspaceIdValidator } from '@/middlewares/workspaces.middlewares';
 import { wrapRequestHandler } from '@/utils/error-handler';
 
 const workspacesRouter = express.Router();
@@ -35,7 +35,7 @@ workspacesRouter.post(
 );
 
 /**========================================================================================================================
- * GET /workspaces/:id
+ * GET /workspaces/:workspace_id
  *
  * Request headers:
  * {
@@ -44,14 +44,20 @@ workspacesRouter.post(
  *
  * Request params:
  * {
- *    id: ObjectId
+ *    workspace_id: ObjectId
  * }
  *
  * Response:
  * - 200 OK: Returns GetWorkspacesResponse.
  * - 404 Not Found: If the user associated with the token is not found.
+ * - 422 Unprocessable Entity: When body data is invalid.
  * - 500 Internal Server Error: If there is an issue on the database side.
  */
-workspacesRouter.get('/:id', accessTokenValidator, getWorkspaceValidator, wrapRequestHandler(getWorkspaceController));
+workspacesRouter.get(
+  '/:workspace_id',
+  accessTokenValidator,
+  getWorkspaceIdValidator(false),
+  wrapRequestHandler(getWorkspaceController),
+);
 
 export default workspacesRouter;

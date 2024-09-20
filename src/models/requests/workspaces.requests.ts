@@ -1,7 +1,7 @@
 import { ParamsDictionary } from 'express-serve-static-core';
 
 export interface GetWorkspaceRequestParams extends ParamsDictionary {
-  id: string;
+  workspace_id: string;
 }
 
 export interface CreateWorkspaceRequestBody {

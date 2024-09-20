@@ -6,7 +6,7 @@ import { BaseError } from '@/models/Errors.model';
 import { CreateWorkspaceRequestBody } from '@/models/requests/workspaces.requests';
 import { GetWorkspaceResponse } from '@/models/responses/workspaces.responses';
 import Workspace from '@/models/schemas/Workspace.schema';
-import { getWorkspaceAggregate } from '@/utils/aggregates';
+import { generateGetWorkspaceAggregate } from '@/utils/aggregates';
 
 import databaseService from './database.services';
 
@@ -24,7 +24,7 @@ class WorkspacesService {
 
   async getWorkspace(user_id: string, workspace_id: string): Promise<GetWorkspaceResponse> {
     const [workspace] = await databaseService.workspaces
-      .aggregate<GetWorkspaceResponse>(getWorkspaceAggregate(user_id, workspace_id))
+      .aggregate<GetWorkspaceResponse>(generateGetWorkspaceAggregate(user_id, workspace_id))
       .toArray();
 
     if (!workspace) {
@@ -40,7 +40,7 @@ class WorkspacesService {
   /**========================================================================================================================
    * Create new workspace.
    *
-   * @param {user_id} user_id - The id of user.
+   * @param {string} user_id - The id of user.
    * @param {Object} payload - An object containing workspace create information.
    * @param {string} payload.name - The name workspace provided by the user.
    * @param {Array} payload.member_emails - The emails of the space members, provided by the user.

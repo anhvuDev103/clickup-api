@@ -7,10 +7,10 @@ import workspacesService from '@/services/workspaces.services';
 import { TokenPayload } from '@/utils/jwt';
 
 export const getWorkspaceController = async (req: Request<GetWorkspaceRequestParams>, res: Response) => {
-  const { id } = req.params;
+  const { workspace_id } = req.params;
   const { user_id } = req.decoded_authorization as TokenPayload;
 
-  const result = await workspacesService.getWorkspace(user_id, id);
+  const result = await workspacesService.getWorkspace(user_id, workspace_id);
 
   const response = new BaseResponse({
     result,

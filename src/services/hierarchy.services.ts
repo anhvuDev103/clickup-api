@@ -1,16 +1,37 @@
 import { ObjectId } from 'mongodb';
 
 import { CreateListRequestBody, CreateSpaceRequestBody } from '@/models/requests/hierarchy.requests';
+import { GetHierarchyResponse } from '@/models/responses/hierarchy.responses';
 import List from '@/models/schemas/List.schema';
 import Space from '@/models/schemas/Space.schema';
+import { generateGetHierachyAggregate } from '@/utils/aggregates';
 
 import databaseService from './database.services';
 
 class HierarchyService {
   /**========================================================================================================================
+   * Get the hierarchy.
+   *
+   * @param {string} user_id - The id of user.
+   * @param {string} workspace_id - The emails of the space members, provided by the user.
+   *
+   * @returns {Promise<GetHierarchyResponse>} - Returns GetHierarchyResponse[].
+   *
+   * @throws {Error} if any database side errors occur.
+   */
+
+  async getHierarchy(user_id: string, workspace_id: string): Promise<GetHierarchyResponse[]> {
+    const hierarchy = await databaseService.spaces
+      .aggregate<GetHierarchyResponse>(generateGetHierachyAggregate(user_id, workspace_id))
+      .toArray();
+
+    return hierarchy;
+  }
+
+  /**========================================================================================================================
    * Create new space.
    *
-   * @param {user_id} user_id - The id of user.
+   * @param {string} user_id - The id of user.
    * @param {Object} payload - An object containing space create information.
    * @param {string} payload.name - The name space provided by the user.
    * @param {string} payload.description - The description space provided by the user.
@@ -41,7 +62,7 @@ class HierarchyService {
   /**========================================================================================================================
    * Create new list.
    *
-   * @param {user_id} user_id - The id of user.
+   * @param {string} user_id - The id of user.
    * @param {Object} payload - An object containing space create information.
    * @param {string} payload.name - The name space provided by the user.
    * @param {boolean} payload.is_private - The boolean represents a private space provided by the user.

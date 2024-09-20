@@ -1,11 +1,42 @@
 import express from 'express';
 
-import { createListController, createSpaceController } from '@/controllers/hierarchy.controllers';
+import {
+  createListController,
+  createSpaceController,
+  getHierarchyController,
+} from '@/controllers/hierarchy.controllers';
 import { accessTokenValidator } from '@/middlewares/auth.middlewares';
 import { createListValidator, createSpaceValidator } from '@/middlewares/hierarchy.middlewares';
+import { getWorkspaceIdValidator } from '@/middlewares/workspaces.middlewares';
 import { wrapRequestHandler } from '@/utils/error-handler';
 
 const hierarchyRouterRouter = express.Router();
+
+/**========================================================================================================================
+ * GET /hierarchy
+ *
+ * Request headers:
+ * {
+ *    Authorization: Bearer {{access_token}}
+ * }
+ *
+ * Request body:
+ * {
+ *    workspace_id: ObjectId
+ * }
+ *
+ * Response:
+ * - 200 OK: On successful getting hierarchy.
+ * - 401 Unauthorized: If the token is invalid, expired.
+ * - 422 Unprocessable Entity: When body data is invalid.
+ * - 500 Internal Server Error: If there is an issue on the database side.
+ */
+hierarchyRouterRouter.get(
+  '/',
+  accessTokenValidator,
+  getWorkspaceIdValidator(),
+  wrapRequestHandler(getHierarchyController),
+);
 
 /**========================================================================================================================
  * POST /hierarchy/space
@@ -26,7 +57,7 @@ const hierarchyRouterRouter = express.Router();
  *
  * Response:
  * - 200 OK: On successful creation of space.
- * - 404 Not Found: If the user associated with the token is not found.
+ * - 401 Unauthorized: If the token is invalid, expired.
  * - 422 Unprocessable Entity: When input data is invalid.
  * - 500 Internal Server Error: If there is an issue on the database side.
  */
@@ -55,7 +86,7 @@ hierarchyRouterRouter.post(
  *
  * Response:
  * - 200 OK: On successful creation of list.
- * - 404 Not Found: If the user associated with the token is not found.
+ * - 401 Unauthorized: If the token is invalid, expired.
  * - 422 Unprocessable Entity: When input data is invalid.
  * - 500 Internal Server Error: If there is an issue on the database side.
  */

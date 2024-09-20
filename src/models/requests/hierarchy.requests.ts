@@ -1,3 +1,7 @@
+export interface GetHierarchyRequestBody {
+  workspace_id: string;
+}
+
 export interface CreateSpaceRequestBody {
   name: string;
   description: string;
