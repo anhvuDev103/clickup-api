@@ -1,4 +1,5 @@
-import { checkSchema, ParamSchema } from 'express-validator';
+import { ParamSchema } from 'express-validator';
+import { isEmail } from 'validator';
 
 import {
   CONTAIN_LOWERCASE_CHARACTERS_REGEX,
@@ -51,5 +52,19 @@ export const getObjectIdValidatorSchema = (field = 'id'): ParamSchema => {
       errorMessage: getInvalidMessage(field),
     },
     trim: true,
+  };
+};
+
+export const getMemberEmailsValidatorSchema = (): ParamSchema => {
+  return {
+    custom: {
+      options: async (value: unknown) => {
+        if (!Array.isArray(value) || value.some((v) => !isEmail(v))) {
+          throw new Error(getCustomMessage('member_emails', 'must be an email array'));
+        }
+
+        return true;
+      },
+    },
   };
 };

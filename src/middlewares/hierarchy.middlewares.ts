@@ -1,10 +1,8 @@
 import { checkSchema } from 'express-validator';
-import { isEmail } from 'validator';
 
-import { RESPONSE_MESSAGE } from '@/constants/messages';
 import { getCustomMessage, getInvalidMessage, getRequiredMessage, validate } from '@/utils/validate';
 
-import { getObjectIdValidatorSchema } from './shared.middlewares';
+import { getMemberEmailsValidatorSchema, getObjectIdValidatorSchema } from './shared.middlewares';
 
 export const createSpaceValidator = validate(
   checkSchema(
@@ -33,18 +31,41 @@ export const createSpaceValidator = validate(
           errorMessage: getInvalidMessage('is_private'),
         },
       },
-      member_emails: {
-        custom: {
-          options: async (value: unknown) => {
-            if (!Array.isArray(value) || value.some((v) => !isEmail(v))) {
-              throw new Error(RESPONSE_MESSAGE.MEMBERS_MUST_BE_AN_EMAIL_ARRAY);
-            }
+      member_emails: getMemberEmailsValidatorSchema(),
+      workspace_id: getObjectIdValidatorSchema('workspace_id'),
+    },
+    ['body'],
+  ),
+);
 
-            return true;
+export const createListValidator = validate(
+  checkSchema(
+    {
+      name: {
+        notEmpty: {
+          errorMessage: getRequiredMessage('name'),
+        },
+        isLength: {
+          errorMessage: getCustomMessage('name', 'should not go over 99 characters'),
+          options: {
+            max: 99,
           },
         },
+        trim: true,
       },
-      workspace_id: getObjectIdValidatorSchema('workspace_id'),
+      is_private: {
+        notEmpty: {
+          errorMessage: getRequiredMessage('is_private'),
+        },
+        isBoolean: {
+          errorMessage: getInvalidMessage('is_private'),
+        },
+      },
+      parent_id: {
+        ...getObjectIdValidatorSchema('parent_id'),
+        optional: true,
+      },
+      member_emails: getMemberEmailsValidatorSchema(),
     },
     ['body'],
   ),

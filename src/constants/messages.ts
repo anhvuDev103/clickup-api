@@ -30,5 +30,4 @@ export const RESPONSE_MESSAGE = {
   VALIDATION_FAILED: 'Validation failed for the request payload.',
   EMAIL_NOT_VERIFIED_YET: 'Email not verified yet.',
   USER_NOT_FOUND: 'User not found.',
-  MEMBERS_MUST_BE_AN_EMAIL_ARRAY: 'Members must be an email array',
 };
