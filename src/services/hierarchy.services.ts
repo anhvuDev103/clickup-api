@@ -1,14 +1,14 @@
 import { ObjectId } from 'mongodb';
 
-import { CreateCategoryRequestBody, CreateSpaceRequestBody } from '@/models/requests/hierarchy.requests';
+import { CreateCategoryRequestBody, CreateProjectRequestBody } from '@/models/requests/hierarchy.requests';
 import { GetHierarchyResponse } from '@/models/responses/hierarchy.responses';
 import Category from '@/models/schemas/Category.schema';
-import Space from '@/models/schemas/Space.schema';
+import Project from '@/models/schemas/Project.schema';
 import { generateGetHierachyAggregate } from '@/utils/aggregates';
 
 import databaseService from './database.services';
 
-type CreateCategoryParams = { user_id: string; space_id: string; payload: CreateCategoryRequestBody };
+type CreateCategoryParams = { user_id: string; project_id: string; payload: CreateCategoryRequestBody };
 
 class HierarchyService {
   /**========================================================================================================================
@@ -23,7 +23,7 @@ class HierarchyService {
    */
 
   async getHierarchy(user_id: string, workspace_id: string): Promise<GetHierarchyResponse[]> {
-    const hierarchy = await databaseService.spaces
+    const hierarchy = await databaseService.projects
       .aggregate<GetHierarchyResponse>(generateGetHierachyAggregate(user_id, workspace_id))
       .toArray();
 
@@ -46,13 +46,13 @@ class HierarchyService {
    * @throws {Error} if any database side errors occur.
    */
 
-  async createSpace(user_id: string, payload: CreateSpaceRequestBody): Promise<void> {
+  async createProject(user_id: string, payload: CreateProjectRequestBody): Promise<void> {
     const member_ids = await databaseService.getUserIdByExistingEmails(payload.member_emails, {
       excludedEmail: user_id,
     });
 
-    await databaseService.spaces.insertOne(
-      new Space({
+    await databaseService.projects.insertOne(
+      new Project({
         ...payload,
         owner_id: new ObjectId(user_id),
         workspace_id: new ObjectId(payload.workspace_id),
@@ -75,7 +75,7 @@ class HierarchyService {
    * @throws {Error} if any database side errors occur.
    */
 
-  async createSubCategory({ user_id, space_id, payload }: CreateCategoryParams): Promise<void> {
+  async createSubCategory({ user_id, project_id, payload }: CreateCategoryParams): Promise<void> {
     const member_ids = await databaseService.getUserIdByExistingEmails(payload.member_emails, {
       excludedEmail: user_id,
     });
@@ -83,7 +83,7 @@ class HierarchyService {
     await databaseService.categories.insertOne(
       new Category({
         ...payload,
-        parent_id: new ObjectId(space_id),
+        parent_id: new ObjectId(project_id),
         member_ids,
       }),
     );
@@ -103,7 +103,7 @@ class HierarchyService {
    * @throws {Error} if any database side errors occur.
    */
 
-  async createCategory({ user_id, space_id, payload }: CreateCategoryParams): Promise<void> {
+  async createCategory({ user_id, project_id, payload }: CreateCategoryParams): Promise<void> {
     const member_ids = await databaseService.getUserIdByExistingEmails(payload.member_emails, {
       excludedEmail: user_id,
     });
@@ -114,7 +114,7 @@ class HierarchyService {
       new Category({
         ...payload,
         _id: category_id,
-        parent_id: new ObjectId(space_id),
+        parent_id: new ObjectId(project_id),
         member_ids,
       }),
       new Category({

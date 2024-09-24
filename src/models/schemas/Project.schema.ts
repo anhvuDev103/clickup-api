@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 
-type SpaceContructor = {
+type ProjectContructor = {
   _id?: ObjectId;
 
   name: string;
@@ -14,7 +14,7 @@ type SpaceContructor = {
   updated_at?: Date;
 };
 
-class Space {
+class Project {
   _id: ObjectId;
 
   name: string;
@@ -27,7 +27,7 @@ class Space {
   created_at: Date;
   updated_at: Date;
 
-  constructor(payload: SpaceContructor) {
+  constructor(payload: ProjectContructor) {
     const now = new Date();
 
     this._id = payload._id || new ObjectId();
@@ -44,4 +44,4 @@ class Space {
   }
 }
 
-export default Space;
+export default Project;

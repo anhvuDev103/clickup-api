@@ -4,7 +4,7 @@ import { ParamsDictionary } from 'express-serve-static-core';
 import {
   CreateCategoryRequestBody,
   CreateCategoryRequestParams,
-  CreateSpaceRequestBody,
+  CreateProjectRequestBody,
   CreateSubCategoryRequestBody,
   CreateSubCategoryRequestParams,
   GetHierarchyRequestBody,
@@ -29,13 +29,13 @@ export const getHierarchyController = async (
   return res.status(response.status).json(response);
 };
 
-export const createSpaceController = async (
-  req: Request<ParamsDictionary, unknown, CreateSpaceRequestBody>,
+export const createProjectController = async (
+  req: Request<ParamsDictionary, unknown, CreateProjectRequestBody>,
   res: Response,
 ) => {
   const { user_id } = req.decoded_authorization as TokenPayload;
 
-  await hierarchyService.createSpace(user_id, req.body);
+  await hierarchyService.createProject(user_id, req.body);
 
   const response = new BaseResponse();
 
@@ -46,12 +46,12 @@ export const createSubCategoryController = async (
   req: Request<CreateSubCategoryRequestParams, unknown, CreateSubCategoryRequestBody>,
   res: Response,
 ) => {
-  const { space_id } = req.params;
+  const { project_id } = req.params;
   const { user_id } = req.decoded_authorization as TokenPayload;
 
   await hierarchyService.createSubCategory({
     user_id,
-    space_id,
+    project_id,
     payload: req.body,
   });
 
@@ -64,12 +64,12 @@ export const createCategoryController = async (
   req: Request<CreateCategoryRequestParams, unknown, CreateCategoryRequestBody>,
   res: Response,
 ) => {
-  const { space_id } = req.params;
+  const { project_id } = req.params;
   const { user_id } = req.decoded_authorization as TokenPayload;
 
   await hierarchyService.createCategory({
     user_id,
-    space_id,
+    project_id,
     payload: req.body,
   });
 

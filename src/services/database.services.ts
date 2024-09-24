@@ -2,8 +2,8 @@ import { Collection, Db, MongoClient, ObjectId } from 'mongodb';
 
 import Category from '@/models/schemas/Category.schema';
 import Otp from '@/models/schemas/Otp.schema';
+import Project from '@/models/schemas/Project.schema';
 import RefreshToken from '@/models/schemas/RefreshToken.schema';
-import Space from '@/models/schemas/Space.schema';
 import User from '@/models/schemas/User.schema';
 import Workspace from '@/models/schemas/Workspace.schema';
 import { logger } from '@/utils/logger';
@@ -81,8 +81,8 @@ class DatabaseService {
     return this.db.collection(process.env.MONGO_WORKSPACES_COLLECTION_NAME as string);
   }
 
-  get spaces(): Collection<Space> {
-    return this.db.collection(process.env.MONGO_SPACES_COLLECTION_NAME as string);
+  get projects(): Collection<Project> {
+    return this.db.collection(process.env.MONGO_PROJECTS_COLLECTION_NAME as string);
   }
 
   get categories(): Collection<Category> {

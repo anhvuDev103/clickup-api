@@ -2,14 +2,14 @@ import express from 'express';
 
 import {
   createCategoryController,
-  createSpaceController,
+  createProjectController,
   createSubCategoryController,
   getHierarchyController,
 } from '@/controllers/hierarchy.controllers';
 import { accessTokenValidator } from '@/middlewares/auth.middlewares';
 import {
   createCategoryValidator,
-  createSpaceValidator,
+  createProjectValidator,
   createSubCategoryValidator,
 } from '@/middlewares/hierarchy.middlewares';
 import { getObjectIdValidatorParams } from '@/middlewares/shared.middlewares';
@@ -45,7 +45,7 @@ hierarchyRouterRouter.get(
 );
 
 /**========================================================================================================================
- * POST /hierarchy/space
+ * POST /hierarchy/project
  *
  * Request headers:
  * {
@@ -68,14 +68,14 @@ hierarchyRouterRouter.get(
  * - 500 Internal Server Error: If there is an issue on the database side.
  */
 hierarchyRouterRouter.post(
-  '/space',
+  '/project',
   accessTokenValidator,
-  createSpaceValidator,
-  wrapRequestHandler(createSpaceController),
+  createProjectValidator,
+  wrapRequestHandler(createProjectController),
 );
 
 /**========================================================================================================================
- * POST /hierarchy/space/:space_id/sub_category
+ * POST /hierarchy/project/:project_id/sub_category
  *
  * Request headers:
  * {
@@ -91,7 +91,7 @@ hierarchyRouterRouter.post(
  *
  * Request params:
  * {
- *    space_id: ObjectId
+ *    project_id: ObjectId
  * }
  *
  * Response:
@@ -101,15 +101,15 @@ hierarchyRouterRouter.post(
  * - 500 Internal Server Error: If there is an issue on the database side.
  */
 hierarchyRouterRouter.post(
-  '/space/:space_id/sub_category',
+  '/project/:project_id/sub_category',
   accessTokenValidator,
-  getObjectIdValidatorParams(['space_id']),
+  getObjectIdValidatorParams(['project_id']),
   createSubCategoryValidator,
   wrapRequestHandler(createSubCategoryController),
 );
 
 /**========================================================================================================================
- * POST /hierarchy/space/:space_id/category
+ * POST /hierarchy/project/:project_id/category
  *
  * Request headers:
  * {
@@ -125,7 +125,7 @@ hierarchyRouterRouter.post(
  *
  * Request params:
  * {
- *    space_id: ObjectId
+ *    project_id: ObjectId
  * }
  *
  * Response:
@@ -135,9 +135,9 @@ hierarchyRouterRouter.post(
  * - 500 Internal Server Error: If there is an issue on the database side.
  */
 hierarchyRouterRouter.post(
-  '/space/:space_id/category',
+  '/project/:project_id/category',
   accessTokenValidator,
-  getObjectIdValidatorParams(['space_id']),
+  getObjectIdValidatorParams(['project_id']),
   createCategoryValidator,
   wrapRequestHandler(createCategoryController),
 );

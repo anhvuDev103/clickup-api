@@ -4,7 +4,7 @@ import { getCustomMessage, getInvalidMessage, getRequiredMessage, validate } fro
 
 import { getMemberEmailsValidatorSchema, getObjectIdValidatorSchema } from './shared.middlewares';
 
-export const createSpaceValidator = validate(
+export const createProjectValidator = validate(
   checkSchema(
     {
       name: {

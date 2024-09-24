@@ -4,7 +4,7 @@ export interface GetHierarchyRequestBody {
   workspace_id: string;
 }
 
-export interface CreateSpaceRequestBody {
+export interface CreateProjectRequestBody {
   name: string;
   description: string;
   is_private: boolean;
@@ -25,9 +25,9 @@ export interface CreateCategoryRequestBody {
 }
 
 export interface CreateSubCategoryRequestParams extends ParamsDictionary {
-  space_id: string;
+  project_id: string;
 }
 
 export interface CreateCategoryRequestParams extends ParamsDictionary {
-  space_id: string;
+  project_id: string;
 }
