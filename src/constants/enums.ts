@@ -17,3 +17,8 @@ export enum HttpStatus {
 
   InternalServerError = 500,
 }
+
+export enum ProjectHierarchyLevel {
+  Category,
+  SubCategory,
+}

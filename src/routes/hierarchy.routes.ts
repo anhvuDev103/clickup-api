@@ -75,7 +75,7 @@ hierarchyRouterRouter.post(
 );
 
 /**========================================================================================================================
- * POST /hierarchy/project/:project_id/sub_category
+ * POST /hierarchy/project/:project_id/subcategory
  *
  * Request headers:
  * {
@@ -101,9 +101,43 @@ hierarchyRouterRouter.post(
  * - 500 Internal Server Error: If there is an issue on the database side.
  */
 hierarchyRouterRouter.post(
-  '/project/:project_id/sub_category',
+  '/project/:project_id/subcategory',
   accessTokenValidator,
   getObjectIdValidatorParams(['project_id']),
+  createSubCategoryValidator,
+  wrapRequestHandler(createSubCategoryController),
+);
+
+/**========================================================================================================================
+ * POST /hierarchy/category/:category_id/subcategory
+ *
+ * Request headers:
+ * {
+ *    Authorization: Bearer {{access_token}}
+ * }
+ *
+ * Request body:
+ * {
+ *    name: string
+ *    is_private: boolean
+ *    member_emails: string[]
+ * }
+ *
+ * Request params:
+ * {
+ *    category_id: ObjectId
+ * }
+ *
+ * Response:
+ * - 200 OK: On successful creation of list.
+ * - 401 Unauthorized: If the token is invalid, expired.
+ * - 422 Unprocessable Entity: When input data is invalid.
+ * - 500 Internal Server Error: If there is an issue on the database side.
+ */
+hierarchyRouterRouter.post(
+  '/category/:category_id/subcategory',
+  accessTokenValidator,
+  getObjectIdValidatorParams(['category_id']),
   createSubCategoryValidator,
   wrapRequestHandler(createSubCategoryController),
 );

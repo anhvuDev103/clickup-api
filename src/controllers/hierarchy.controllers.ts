@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
 
+import { HttpStatus } from '@/constants/enums';
+import { RESPONSE_MESSAGE } from '@/constants/messages';
+import { BaseError } from '@/models/Errors.model';
 import {
   CreateCategoryRequestBody,
   CreateCategoryRequestParams,
@@ -46,12 +49,21 @@ export const createSubCategoryController = async (
   req: Request<CreateSubCategoryRequestParams, unknown, CreateSubCategoryRequestBody>,
   res: Response,
 ) => {
-  const { project_id } = req.params;
+  const { project_id, category_id } = req.params;
   const { user_id } = req.decoded_authorization as TokenPayload;
+
+  const parent_id = project_id || category_id;
+
+  if (!parent_id) {
+    throw new BaseError({
+      status: HttpStatus.BadRequest,
+      message: RESPONSE_MESSAGE.PARENT_NOT_FOUND,
+    });
+  }
 
   await hierarchyService.createSubCategory({
     user_id,
-    project_id,
+    parent_id,
     payload: req.body,
   });
 

@@ -26,6 +26,7 @@ export interface CreateCategoryRequestBody {
 
 export interface CreateSubCategoryRequestParams extends ParamsDictionary {
   project_id: string;
+  category_id: string;
 }
 
 export interface CreateCategoryRequestParams extends ParamsDictionary {

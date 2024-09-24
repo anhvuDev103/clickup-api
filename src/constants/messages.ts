@@ -24,6 +24,9 @@ export const RESPONSE_MESSAGE = {
   //Token
   REFRESH_TOKEN_DOES_NOT_EXIST: 'This refresh token does not exist.',
 
+  //Hierarchy
+  PARENT_NOT_FOUND: 'Parent not found.',
+
   //Error
   VALIDATION_FAILED: 'Validation failed for the request payload.',
   EMAIL_NOT_VERIFIED_YET: 'Email not verified yet.',

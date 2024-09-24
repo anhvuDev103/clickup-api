@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongodb';
 
+import { ProjectHierarchyLevel } from '@/constants/enums';
 import { CreateCategoryRequestBody, CreateProjectRequestBody } from '@/models/requests/hierarchy.requests';
 import { GetHierarchyResponse } from '@/models/responses/hierarchy.responses';
 import Category from '@/models/schemas/Category.schema';
@@ -9,6 +10,7 @@ import { generateGetHierachyAggregate } from '@/utils/aggregates';
 import databaseService from './database.services';
 
 type CreateCategoryParams = { user_id: string; project_id: string; payload: CreateCategoryRequestBody };
+type CreateSubCategoryParams = { user_id: string; parent_id: string; payload: CreateCategoryRequestBody };
 
 class HierarchyService {
   /**========================================================================================================================
@@ -62,9 +64,10 @@ class HierarchyService {
   }
 
   /**========================================================================================================================
-   * Create new list.
+   * Create new list from a space/folder.
    *
    * @param {string} user_id - The id of user.
+   * @param {string} parent_id - The id of the space/folder.
    * @param {Object} payload - An object containing space create information.
    * @param {string} payload.name - The name space provided by the user.
    * @param {boolean} payload.is_private - The boolean represents a private space provided by the user.
@@ -75,7 +78,7 @@ class HierarchyService {
    * @throws {Error} if any database side errors occur.
    */
 
-  async createSubCategory({ user_id, project_id, payload }: CreateCategoryParams): Promise<void> {
+  async createSubCategory({ user_id, parent_id, payload }: CreateSubCategoryParams): Promise<void> {
     const member_ids = await databaseService.getUserIdByExistingEmails(payload.member_emails, {
       excludedEmail: user_id,
     });
@@ -83,8 +86,9 @@ class HierarchyService {
     await databaseService.categories.insertOne(
       new Category({
         ...payload,
-        parent_id: new ObjectId(project_id),
+        parent_id: new ObjectId(parent_id),
         member_ids,
+        hierarchy_level: ProjectHierarchyLevel.SubCategory,
       }),
     );
   }
@@ -93,6 +97,7 @@ class HierarchyService {
    * Create new folder.
    *
    * @param {string} user_id - The id of user.
+   * @param {string} project_id - The id of the project.
    * @param {Object} payload - An object containing space create information.
    * @param {string} payload.name - The name space provided by the user.
    * @param {boolean} payload.is_private - The boolean represents a private space provided by the user.
@@ -116,12 +121,14 @@ class HierarchyService {
         _id: category_id,
         parent_id: new ObjectId(project_id),
         member_ids,
+        hierarchy_level: ProjectHierarchyLevel.Category,
       }),
       new Category({
-        name: 'Category',
+        name: 'List',
         member_ids: [],
         parent_id: category_id,
         is_private: false,
+        hierarchy_level: ProjectHierarchyLevel.SubCategory,
       }),
     ]);
   }
