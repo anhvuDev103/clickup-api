@@ -195,11 +195,40 @@ export const generateGetHierachyAggregate = (user_id: string, workspace_id: stri
       },
     },
     {
+      $unwind: {
+        path: '$categories',
+      },
+    },
+    {
       $lookup: {
         from: 'categories',
         localField: 'categories._id',
         foreignField: 'parent_id',
         as: 'categories.sub_categories',
+      },
+    },
+    {
+      $addFields: {
+        categories: {
+          $cond: {
+            if: {
+              $eq: ['$categories.hierarchy_level', 1],
+            },
+            then: {
+              name: 'hidden',
+              is_hidden: true,
+              sub_categories: ['$categories'],
+            },
+            else: {
+              $mergeObjects: [
+                '$categories',
+                {
+                  is_hidden: false,
+                },
+              ],
+            },
+          },
+        },
       },
     },
     {
@@ -240,15 +269,20 @@ export const generateGetHierachyAggregate = (user_id: string, workspace_id: stri
           updated_at: 0,
         },
         categories: {
+          _id: 0,
           parent_id: 0,
           member_ids: 0,
           created_at: 0,
           updated_at: 0,
+          hierarchy_level: 0,
           sub_categories: {
+            _id: 0,
             parent_id: 0,
             member_ids: 0,
             created_at: 0,
             updated_at: 0,
+            sub_categories: 0,
+            hierarchy_level: 0,
           },
         },
       },
