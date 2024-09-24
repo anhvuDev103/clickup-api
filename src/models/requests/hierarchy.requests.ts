@@ -1,3 +1,5 @@
+import { ParamsDictionary } from 'express-serve-static-core';
+
 export interface GetHierarchyRequestBody {
   workspace_id: string;
 }
@@ -13,6 +15,9 @@ export interface CreateSpaceRequestBody {
 export interface CreateListRequestBody {
   name: string;
   is_private: boolean;
-  parent_id?: string;
   member_emails: string[];
+}
+
+export interface CreateListRequestParams extends ParamsDictionary {
+  space_id: string;
 }

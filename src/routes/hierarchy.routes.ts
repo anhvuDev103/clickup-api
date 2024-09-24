@@ -7,6 +7,7 @@ import {
 } from '@/controllers/hierarchy.controllers';
 import { accessTokenValidator } from '@/middlewares/auth.middlewares';
 import { createListValidator, createSpaceValidator } from '@/middlewares/hierarchy.middlewares';
+import { getObjectIdValidatorParams } from '@/middlewares/shared.middlewares';
 import { getWorkspaceIdValidator } from '@/middlewares/workspaces.middlewares';
 import { wrapRequestHandler } from '@/utils/error-handler';
 
@@ -69,7 +70,7 @@ hierarchyRouterRouter.post(
 );
 
 /**========================================================================================================================
- * POST /hierarchy/list
+ * POST /hierarchy/space/:space_id/sub_list
  *
  * Request headers:
  * {
@@ -80,8 +81,12 @@ hierarchyRouterRouter.post(
  * {
  *    name: string
  *    is_private: boolean
- *    parent_id?: ObjectId
  *    member_emails: string[]
+ * }
+ *
+ * Request params:
+ * {
+ *    space_id: ObjectId
  * }
  *
  * Response:
@@ -91,8 +96,9 @@ hierarchyRouterRouter.post(
  * - 500 Internal Server Error: If there is an issue on the database side.
  */
 hierarchyRouterRouter.post(
-  '/list',
+  '/space/:space_id/sub_list',
   accessTokenValidator,
+  getObjectIdValidatorParams(['space_id']),
   createListValidator,
   wrapRequestHandler(createListController),
 );

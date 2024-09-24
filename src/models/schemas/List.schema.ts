@@ -5,7 +5,7 @@ type ListContructor = {
 
   name: string;
   is_private: boolean;
-  parent_id?: ObjectId;
+  parent_id: ObjectId;
   member_ids: ObjectId[];
 
   created_at?: Date;
@@ -30,7 +30,7 @@ class List {
 
     this.name = payload.name;
     this.is_private = payload.is_private;
-    this.parent_id = payload.parent_id || null;
+    this.parent_id = payload.parent_id;
     this.member_ids = payload.member_ids;
 
     this.created_at = payload.created_at || now;

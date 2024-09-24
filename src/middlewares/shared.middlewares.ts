@@ -1,4 +1,4 @@
-import { ParamSchema } from 'express-validator';
+import { checkSchema, ParamSchema } from 'express-validator';
 import { isEmail } from 'validator';
 
 import {
@@ -67,4 +67,14 @@ export const getMemberEmailsValidatorSchema = (): ParamSchema => {
       },
     },
   };
+};
+
+export const getObjectIdValidatorParams = (fields: string[]) => {
+  const fieldsSchema: Record<string, ParamSchema> = {};
+
+  for (const field of fields) {
+    fieldsSchema[field] = getObjectIdValidatorSchema(field);
+  }
+
+  return validate(checkSchema(fieldsSchema));
 };

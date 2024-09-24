@@ -3,6 +3,7 @@ import { ParamsDictionary } from 'express-serve-static-core';
 
 import {
   CreateListRequestBody,
+  CreateListRequestParams,
   CreateSpaceRequestBody,
   GetHierarchyRequestBody,
 } from '@/models/requests/hierarchy.requests';
@@ -40,12 +41,17 @@ export const createSpaceController = async (
 };
 
 export const createListController = async (
-  req: Request<ParamsDictionary, unknown, CreateListRequestBody>,
+  req: Request<CreateListRequestParams, unknown, CreateListRequestBody>,
   res: Response,
 ) => {
+  const { space_id } = req.params;
   const { user_id } = req.decoded_authorization as TokenPayload;
 
-  await hierarchyService.createList(user_id, req.body);
+  await hierarchyService.createList({
+    user_id,
+    space_id,
+    payload: req.body,
+  });
 
   const response = new BaseResponse();
 

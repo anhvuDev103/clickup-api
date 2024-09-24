@@ -61,10 +61,6 @@ export const createListValidator = validate(
           errorMessage: getInvalidMessage('is_private'),
         },
       },
-      parent_id: {
-        ...getObjectIdValidatorSchema('parent_id'),
-        optional: true,
-      },
       member_emails: getMemberEmailsValidatorSchema(),
     },
     ['body'],
