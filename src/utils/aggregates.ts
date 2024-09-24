@@ -199,7 +199,7 @@ export const generateGetHierachyAggregate = (user_id: string, workspace_id: stri
         from: 'categories',
         localField: 'categories._id',
         foreignField: 'parent_id',
-        as: 'categories.sub_categorys',
+        as: 'categories.sub_categories',
       },
     },
     {
@@ -244,7 +244,7 @@ export const generateGetHierachyAggregate = (user_id: string, workspace_id: stri
           member_ids: 0,
           created_at: 0,
           updated_at: 0,
-          sub_categorys: {
+          sub_categories: {
             parent_id: 0,
             member_ids: 0,
             created_at: 0,
