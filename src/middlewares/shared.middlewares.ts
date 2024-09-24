@@ -76,5 +76,5 @@ export const getObjectIdValidatorParams = (fields: string[]) => {
     fieldsSchema[field] = getObjectIdValidatorSchema(field);
   }
 
-  return validate(checkSchema(fieldsSchema));
+  return validate(checkSchema(fieldsSchema, ['params']));
 };

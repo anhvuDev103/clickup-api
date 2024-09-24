@@ -12,10 +12,20 @@ export interface CreateSpaceRequestBody {
   workspace_id: string;
 }
 
+export interface CreateSubListRequestBody {
+  name: string;
+  is_private: boolean;
+  member_emails: string[];
+}
+
 export interface CreateListRequestBody {
   name: string;
   is_private: boolean;
   member_emails: string[];
+}
+
+export interface CreateSubListRequestParams extends ParamsDictionary {
+  space_id: string;
 }
 
 export interface CreateListRequestParams extends ParamsDictionary {

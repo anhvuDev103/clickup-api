@@ -38,6 +38,35 @@ export const createSpaceValidator = validate(
   ),
 );
 
+export const createSubListValidator = validate(
+  checkSchema(
+    {
+      name: {
+        notEmpty: {
+          errorMessage: getRequiredMessage('name'),
+        },
+        isLength: {
+          errorMessage: getCustomMessage('name', 'should not go over 99 characters'),
+          options: {
+            max: 99,
+          },
+        },
+        trim: true,
+      },
+      is_private: {
+        notEmpty: {
+          errorMessage: getRequiredMessage('is_private'),
+        },
+        isBoolean: {
+          errorMessage: getInvalidMessage('is_private'),
+        },
+      },
+      member_emails: getMemberEmailsValidatorSchema(),
+    },
+    ['body'],
+  ),
+);
+
 export const createListValidator = validate(
   checkSchema(
     {

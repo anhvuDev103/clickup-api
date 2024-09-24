@@ -5,6 +5,8 @@ import {
   CreateListRequestBody,
   CreateListRequestParams,
   CreateSpaceRequestBody,
+  CreateSubListRequestBody,
+  CreateSubListRequestParams,
   GetHierarchyRequestBody,
 } from '@/models/requests/hierarchy.requests';
 import { BaseResponse } from '@/models/Response.model';
@@ -34,6 +36,24 @@ export const createSpaceController = async (
   const { user_id } = req.decoded_authorization as TokenPayload;
 
   await hierarchyService.createSpace(user_id, req.body);
+
+  const response = new BaseResponse();
+
+  return res.status(response.status).json(response);
+};
+
+export const createSubListController = async (
+  req: Request<CreateSubListRequestParams, unknown, CreateSubListRequestBody>,
+  res: Response,
+) => {
+  const { space_id } = req.params;
+  const { user_id } = req.decoded_authorization as TokenPayload;
+
+  await hierarchyService.createSubList({
+    user_id,
+    space_id,
+    payload: req.body,
+  });
 
   const response = new BaseResponse();
 
