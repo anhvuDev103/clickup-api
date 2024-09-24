@@ -183,23 +183,23 @@ export const generateGetHierachyAggregate = (user_id: string, workspace_id: stri
     },
     {
       $lookup: {
-        from: 'lists',
+        from: 'categories',
         localField: '_id',
         foreignField: 'parent_id',
-        as: 'lists',
+        as: 'categories',
       },
     },
     {
       $unwind: {
-        path: '$lists',
+        path: '$categories',
       },
     },
     {
       $lookup: {
-        from: 'lists',
-        localField: 'lists._id',
+        from: 'categories',
+        localField: 'categories._id',
         foreignField: 'parent_id',
-        as: 'lists.sub_lists',
+        as: 'categories.sub_categorys',
       },
     },
     {
@@ -208,8 +208,8 @@ export const generateGetHierachyAggregate = (user_id: string, workspace_id: stri
         root: {
           $first: '$$ROOT',
         },
-        lists: {
-          $push: '$lists',
+        categories: {
+          $push: '$categories',
         },
       },
     },
@@ -219,7 +219,7 @@ export const generateGetHierachyAggregate = (user_id: string, workspace_id: stri
           $mergeObjects: [
             '$root',
             {
-              lists: '$lists',
+              categories: '$categories',
             },
           ],
         },
@@ -239,12 +239,12 @@ export const generateGetHierachyAggregate = (user_id: string, workspace_id: stri
           created_at: 0,
           updated_at: 0,
         },
-        lists: {
+        categories: {
           parent_id: 0,
           member_ids: 0,
           created_at: 0,
           updated_at: 0,
-          sub_lists: {
+          sub_categorys: {
             parent_id: 0,
             member_ids: 0,
             created_at: 0,

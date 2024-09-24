@@ -2,11 +2,11 @@ import { Request, Response } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
 
 import {
-  CreateListRequestBody,
-  CreateListRequestParams,
+  CreateCategoryRequestBody,
+  CreateCategoryRequestParams,
   CreateSpaceRequestBody,
-  CreateSubListRequestBody,
-  CreateSubListRequestParams,
+  CreateSubCategoryRequestBody,
+  CreateSubCategoryRequestParams,
   GetHierarchyRequestBody,
 } from '@/models/requests/hierarchy.requests';
 import { BaseResponse } from '@/models/Response.model';
@@ -42,14 +42,14 @@ export const createSpaceController = async (
   return res.status(response.status).json(response);
 };
 
-export const createSubListController = async (
-  req: Request<CreateSubListRequestParams, unknown, CreateSubListRequestBody>,
+export const createSubCategoryController = async (
+  req: Request<CreateSubCategoryRequestParams, unknown, CreateSubCategoryRequestBody>,
   res: Response,
 ) => {
   const { space_id } = req.params;
   const { user_id } = req.decoded_authorization as TokenPayload;
 
-  await hierarchyService.createSubList({
+  await hierarchyService.createSubCategory({
     user_id,
     space_id,
     payload: req.body,
@@ -60,14 +60,14 @@ export const createSubListController = async (
   return res.status(response.status).json(response);
 };
 
-export const createListController = async (
-  req: Request<CreateListRequestParams, unknown, CreateListRequestBody>,
+export const createCategoryController = async (
+  req: Request<CreateCategoryRequestParams, unknown, CreateCategoryRequestBody>,
   res: Response,
 ) => {
   const { space_id } = req.params;
   const { user_id } = req.decoded_authorization as TokenPayload;
 
-  await hierarchyService.createList({
+  await hierarchyService.createCategory({
     user_id,
     space_id,
     payload: req.body,

@@ -1,13 +1,17 @@
 import express from 'express';
 
 import {
-  createListController,
+  createCategoryController,
   createSpaceController,
-  createSubListController,
+  createSubCategoryController,
   getHierarchyController,
 } from '@/controllers/hierarchy.controllers';
 import { accessTokenValidator } from '@/middlewares/auth.middlewares';
-import { createListValidator, createSpaceValidator, createSubListValidator } from '@/middlewares/hierarchy.middlewares';
+import {
+  createCategoryValidator,
+  createSpaceValidator,
+  createSubCategoryValidator,
+} from '@/middlewares/hierarchy.middlewares';
 import { getObjectIdValidatorParams } from '@/middlewares/shared.middlewares';
 import { getWorkspaceIdValidator } from '@/middlewares/workspaces.middlewares';
 import { wrapRequestHandler } from '@/utils/error-handler';
@@ -71,7 +75,7 @@ hierarchyRouterRouter.post(
 );
 
 /**========================================================================================================================
- * POST /hierarchy/space/:space_id/sub_list
+ * POST /hierarchy/space/:space_id/sub_category
  *
  * Request headers:
  * {
@@ -97,15 +101,15 @@ hierarchyRouterRouter.post(
  * - 500 Internal Server Error: If there is an issue on the database side.
  */
 hierarchyRouterRouter.post(
-  '/space/:space_id/sub_list',
+  '/space/:space_id/sub_category',
   accessTokenValidator,
   getObjectIdValidatorParams(['space_id']),
-  createSubListValidator,
-  wrapRequestHandler(createSubListController),
+  createSubCategoryValidator,
+  wrapRequestHandler(createSubCategoryController),
 );
 
 /**========================================================================================================================
- * POST /hierarchy/space/:space_id/list
+ * POST /hierarchy/space/:space_id/category
  *
  * Request headers:
  * {
@@ -125,17 +129,17 @@ hierarchyRouterRouter.post(
  * }
  *
  * Response:
- * - 200 OK: On successful creation of list.
+ * - 200 OK: On successful creation of folder.
  * - 401 Unauthorized: If the token is invalid, expired.
  * - 422 Unprocessable Entity: When input data is invalid.
  * - 500 Internal Server Error: If there is an issue on the database side.
  */
 hierarchyRouterRouter.post(
-  '/space/:space_id/list',
+  '/space/:space_id/category',
   accessTokenValidator,
   getObjectIdValidatorParams(['space_id']),
-  createListValidator,
-  wrapRequestHandler(createListController),
+  createCategoryValidator,
+  wrapRequestHandler(createCategoryController),
 );
 
 export default hierarchyRouterRouter;

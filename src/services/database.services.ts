@@ -1,6 +1,6 @@
 import { Collection, Db, MongoClient, ObjectId } from 'mongodb';
 
-import List from '@/models/schemas/List.schema';
+import Category from '@/models/schemas/Category.schema';
 import Otp from '@/models/schemas/Otp.schema';
 import RefreshToken from '@/models/schemas/RefreshToken.schema';
 import Space from '@/models/schemas/Space.schema';
@@ -85,8 +85,8 @@ class DatabaseService {
     return this.db.collection(process.env.MONGO_SPACES_COLLECTION_NAME as string);
   }
 
-  get lists(): Collection<List> {
-    return this.db.collection(process.env.MONGO_LISTS_COLLECTION_NAME as string);
+  get categories(): Collection<Category> {
+    return this.db.collection(process.env.MONGO_CATEGORIES_COLLECTION_NAME as string);
   }
 
   /**

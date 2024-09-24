@@ -1,14 +1,14 @@
 import { ObjectId } from 'mongodb';
 
-import { CreateListRequestBody, CreateSpaceRequestBody } from '@/models/requests/hierarchy.requests';
+import { CreateCategoryRequestBody, CreateSpaceRequestBody } from '@/models/requests/hierarchy.requests';
 import { GetHierarchyResponse } from '@/models/responses/hierarchy.responses';
-import List from '@/models/schemas/List.schema';
+import Category from '@/models/schemas/Category.schema';
 import Space from '@/models/schemas/Space.schema';
 import { generateGetHierachyAggregate } from '@/utils/aggregates';
 
 import databaseService from './database.services';
 
-type CreateListParams = { user_id: string; space_id: string; payload: CreateListRequestBody };
+type CreateCategoryParams = { user_id: string; space_id: string; payload: CreateCategoryRequestBody };
 
 class HierarchyService {
   /**========================================================================================================================
@@ -62,7 +62,7 @@ class HierarchyService {
   }
 
   /**========================================================================================================================
-   * Create new sub-list.
+   * Create new list.
    *
    * @param {string} user_id - The id of user.
    * @param {Object} payload - An object containing space create information.
@@ -75,13 +75,13 @@ class HierarchyService {
    * @throws {Error} if any database side errors occur.
    */
 
-  async createSubList({ user_id, space_id, payload }: CreateListParams): Promise<void> {
+  async createSubCategory({ user_id, space_id, payload }: CreateCategoryParams): Promise<void> {
     const member_ids = await databaseService.getUserIdByExistingEmails(payload.member_emails, {
       excludedEmail: user_id,
     });
 
-    await databaseService.lists.insertOne(
-      new List({
+    await databaseService.categories.insertOne(
+      new Category({
         ...payload,
         parent_id: new ObjectId(space_id),
         member_ids,
@@ -90,7 +90,7 @@ class HierarchyService {
   }
 
   /**========================================================================================================================
-   * Create new list.
+   * Create new folder.
    *
    * @param {string} user_id - The id of user.
    * @param {Object} payload - An object containing space create information.
@@ -103,24 +103,24 @@ class HierarchyService {
    * @throws {Error} if any database side errors occur.
    */
 
-  async createList({ user_id, space_id, payload }: CreateListParams): Promise<void> {
+  async createCategory({ user_id, space_id, payload }: CreateCategoryParams): Promise<void> {
     const member_ids = await databaseService.getUserIdByExistingEmails(payload.member_emails, {
       excludedEmail: user_id,
     });
 
-    const list_id = new ObjectId();
+    const category_id = new ObjectId();
 
-    await databaseService.lists.insertMany([
-      new List({
+    await databaseService.categories.insertMany([
+      new Category({
         ...payload,
-        _id: list_id,
+        _id: category_id,
         parent_id: new ObjectId(space_id),
         member_ids,
       }),
-      new List({
-        name: 'List',
+      new Category({
+        name: 'Category',
         member_ids: [],
-        parent_id: list_id,
+        parent_id: category_id,
         is_private: false,
       }),
     ]);

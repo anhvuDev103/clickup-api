@@ -38,7 +38,7 @@ export const createSpaceValidator = validate(
   ),
 );
 
-export const createSubListValidator = validate(
+export const createSubCategoryValidator = validate(
   checkSchema(
     {
       name: {
@@ -67,7 +67,7 @@ export const createSubListValidator = validate(
   ),
 );
 
-export const createListValidator = validate(
+export const createCategoryValidator = validate(
   checkSchema(
     {
       name: {

@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 
-type ListContructor = {
+type CategoryContructor = {
   _id?: ObjectId;
 
   name: string;
@@ -12,7 +12,7 @@ type ListContructor = {
   updated_at?: Date;
 };
 
-class List {
+class Category {
   _id: ObjectId;
 
   name: string;
@@ -23,7 +23,7 @@ class List {
   created_at: Date;
   updated_at: Date;
 
-  constructor(payload: ListContructor) {
+  constructor(payload: CategoryContructor) {
     const now = new Date();
 
     this._id = payload._id || new ObjectId();
@@ -38,4 +38,4 @@ class List {
   }
 }
 
-export default List;
+export default Category;

@@ -1,10 +1,10 @@
 import { SimpleUserProfileResponse } from './users.responses';
 
-interface SimpleList {
+interface SimpleCategory {
   _id: string;
   name: string;
   is_private: boolean;
-  sub_lists?: SimpleList;
+  sub_categorys?: SimpleCategory;
 }
 
 export interface GetHierarchyResponse {
@@ -14,5 +14,5 @@ export interface GetHierarchyResponse {
   is_private: boolean;
 
   members: SimpleUserProfileResponse;
-  lists: SimpleList;
+  categories: SimpleCategory;
 }

@@ -12,22 +12,22 @@ export interface CreateSpaceRequestBody {
   workspace_id: string;
 }
 
-export interface CreateSubListRequestBody {
+export interface CreateSubCategoryRequestBody {
   name: string;
   is_private: boolean;
   member_emails: string[];
 }
 
-export interface CreateListRequestBody {
+export interface CreateCategoryRequestBody {
   name: string;
   is_private: boolean;
   member_emails: string[];
 }
 
-export interface CreateSubListRequestParams extends ParamsDictionary {
+export interface CreateSubCategoryRequestParams extends ParamsDictionary {
   space_id: string;
 }
 
-export interface CreateListRequestParams extends ParamsDictionary {
+export interface CreateCategoryRequestParams extends ParamsDictionary {
   space_id: string;
 }
