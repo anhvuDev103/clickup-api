@@ -22,3 +22,17 @@ export enum ProjectHierarchyLevel {
   Category,
   SubCategory,
 }
+
+export enum TaskPriority {
+  None = 'none',
+  Low = 'low',
+  Normal = 'normal',
+  High = 'high',
+  Urgent = 'urgent',
+}
+
+export enum TaskStatus {
+  Todo = 'to do',
+  InProgress = 'in progress',
+  Complete = 'complete',
+}

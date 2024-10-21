@@ -45,6 +45,16 @@ export const getValidationMessage = (errorDetail?: string) => (field: string, cu
   return text.replace('{{field}}', field);
 };
 
+export const getCustomMessage = getValidationMessage();
 export const getRequiredMessage = getValidationMessage('is required');
 export const getInvalidMessage = getValidationMessage('is invalid');
-export const getCustomMessage = getValidationMessage();
+export const getIsInMessage = (values: (number | string)[]) => {
+  const quotedCharacters = values.map((value) => {
+    if (typeof value === 'number') {
+      return value;
+    }
+
+    return `'${value}'`;
+  });
+  return getValidationMessage(`must be one of the following: ${quotedCharacters.join(', ')}`);
+};

@@ -5,6 +5,7 @@ import express from 'express';
 
 import authRouter from './routes/auth.routes';
 import hierarchyRouter from './routes/hierarchy.routes';
+import tasksRouter from './routes/tasks.routes';
 import usersRouter from './routes/user.routes';
 import verificationRouter from './routes/verification.routes';
 import workspacesRouter from './routes/workspaces.routes';
@@ -34,6 +35,7 @@ app.use('/users', usersRouter);
 
 app.use('/workspaces', workspacesRouter);
 app.use('/hierarchy', hierarchyRouter);
+app.use('/tasks', tasksRouter);
 
 app.use(defaultErrorRequestHandler);
 

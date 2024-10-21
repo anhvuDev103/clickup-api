@@ -4,6 +4,7 @@ import Category from '@/models/schemas/Category.schema';
 import Otp from '@/models/schemas/Otp.schema';
 import Project from '@/models/schemas/Project.schema';
 import RefreshToken from '@/models/schemas/RefreshToken.schema';
+import Task from '@/models/schemas/Task.schema';
 import User from '@/models/schemas/User.schema';
 import Workspace from '@/models/schemas/Workspace.schema';
 import { logger } from '@/utils/logger';
@@ -87,6 +88,10 @@ class DatabaseService {
 
   get categories(): Collection<Category> {
     return this.db.collection(process.env.MONGO_CATEGORIES_COLLECTION_NAME as string);
+  }
+
+  get tasks(): Collection<Task> {
+    return this.db.collection(process.env.MONGO_TASKS_COLLECTION_NAME as string);
   }
 
   /**
