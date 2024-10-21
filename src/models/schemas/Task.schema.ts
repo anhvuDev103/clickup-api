@@ -10,9 +10,9 @@ type TaskContructor = {
   priority?: TaskPriority;
   status?: TaskStatus;
 
-  projectId: ObjectId;
-  categoryId: ObjectId;
-  subcategoryId: ObjectId;
+  project_id: ObjectId;
+  category_id: ObjectId;
+  subcategory_id: ObjectId;
 };
 
 class Task {
@@ -23,9 +23,9 @@ class Task {
   priority: TaskPriority;
   status: TaskStatus;
 
-  projectId: ObjectId;
-  categoryId: ObjectId;
-  subcategoryId: ObjectId;
+  project_id: ObjectId;
+  category_id: ObjectId;
+  subcategory_id: ObjectId;
 
   constructor(payload: TaskContructor) {
     this._id = payload._id || new ObjectId();
@@ -35,9 +35,9 @@ class Task {
     this.priority = payload.priority || TaskPriority.None;
     this.status = payload.status || TaskStatus.Todo;
 
-    this.projectId = payload.projectId;
-    this.categoryId = payload.categoryId;
-    this.subcategoryId = payload.subcategoryId;
+    this.project_id = payload.project_id;
+    this.category_id = payload.category_id;
+    this.subcategory_id = payload.subcategory_id;
   }
 }
 

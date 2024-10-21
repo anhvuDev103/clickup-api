@@ -13,7 +13,7 @@ import {
   createSubCategoryValidator,
 } from '@/middlewares/hierarchy.middlewares';
 import { getObjectIdValidatorParams } from '@/middlewares/shared.middlewares';
-import { getWorkspaceIdValidator } from '@/middlewares/workspaces.middlewares';
+import { getWorkspaceIdValidatorHeaders } from '@/middlewares/workspaces.middlewares';
 import { wrapRequestHandler } from '@/utils/error-handler';
 
 const hierarchyRouterRouter = express.Router();
@@ -24,11 +24,7 @@ const hierarchyRouterRouter = express.Router();
  * Request headers:
  * {
  *    Authorization: Bearer {{access_token}}
- * }
- *
- * Request body:
- * {
- *    workspace_id: ObjectId
+ *    X-Workspace-Id: ObjectId
  * }
  *
  * Response:
@@ -40,7 +36,7 @@ const hierarchyRouterRouter = express.Router();
 hierarchyRouterRouter.get(
   '/',
   accessTokenValidator,
-  getWorkspaceIdValidator(),
+  getWorkspaceIdValidatorHeaders(),
   wrapRequestHandler(getHierarchyController),
 );
 

@@ -37,9 +37,18 @@ export const createTaskValidator = validate(
           errorMessage: getIsInMessage(TaskStatuses)('status'),
         },
       },
-      projectId: getObjectIdValidatorSchema('projectId'),
-      categoryId: getObjectIdValidatorSchema('categoryId'),
-      subcategoryId: getObjectIdValidatorSchema('subcategoryId'),
+      project_id: getObjectIdValidatorSchema('project_id'),
+      category_id: getObjectIdValidatorSchema('category_id'),
+      subcategory_id: getObjectIdValidatorSchema('subcategory_id'),
+    },
+    ['body'],
+  ),
+);
+
+export const getTaskValidator = validate(
+  checkSchema(
+    {
+      subcategory_id: getObjectIdValidatorSchema('subcategory_id'),
     },
     ['body'],
   ),

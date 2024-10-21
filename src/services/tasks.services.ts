@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 
 import { CreateTaskRequestBody } from '@/models/requests/tasks.requests';
 import Task from '@/models/schemas/Task.schema';
@@ -15,9 +15,9 @@ class TasksService {
    * @param {string} payload.assignees - The task's assignees.
    * @param {string} payload.priority - The task's priority.
    * @param {string} payload.status - The task's status.
-   * @param {string} payload.projectId - The task's projectId.
-   * @param {string} payload.categoryId - The task's categoryId.
-   * @param {string} payload.subcategoryId - The task's subcategoryId.
+   * @param {string} payload.project_id - The task's project_id.
+   * @param {string} payload.category_id - The task's category_id.
+   * @param {string} payload.subcategory_id - The task's subcategory_id.
    *
    * @returns {Promise<void>} - Returns nothing.
    *
@@ -31,11 +31,32 @@ class TasksService {
       new Task({
         ...payload,
         assignees: assigneeObjectIds,
-        projectId: new ObjectId(payload.projectId),
-        categoryId: new ObjectId(payload.categoryId),
-        subcategoryId: new ObjectId(payload.subcategoryId),
+        project_id: new ObjectId(payload.project_id),
+        category_id: new ObjectId(payload.category_id),
+        subcategory_id: new ObjectId(payload.subcategory_id),
       }),
     );
+  }
+
+  /**========================================================================================================================
+   * Get tasks.
+   *
+   * @param {string} user_id - The id of user.
+   * @param {Object} subcategory_id - The id of subcategory.
+   *
+   * @returns {Promise<WithId<Task>[]>} - Returns a list of tasks that match the query filters.
+   *
+   * @throws {Error} if any database side errors occur.
+   */
+
+  async getTasks(subcategory_id: string): Promise<WithId<Task>[]> {
+    const tasks = await databaseService.tasks
+      .find({
+        subcategory_id: new ObjectId(subcategory_id),
+      })
+      .toArray();
+
+    return tasks;
   }
 }
 

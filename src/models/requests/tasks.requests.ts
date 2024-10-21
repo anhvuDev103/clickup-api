@@ -5,7 +5,11 @@ export interface CreateTaskRequestBody {
   assignees: string[];
   priority?: TaskPriority;
   status?: TaskStatus;
-  projectId: string;
-  categoryId: string;
-  subcategoryId: string;
+  project_id: string;
+  category_id: string;
+  subcategory_id: string;
+}
+
+export interface GetTasksRequestBody {
+  subcategory_id: string;
 }

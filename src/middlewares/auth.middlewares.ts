@@ -113,7 +113,6 @@ export const refreshTokenValidator = validate(
               token: value,
               user_id: new ObjectId(user_id),
             });
-            console.log('>> Check | refreshToken:', { value, refreshToken });
 
             if (!refreshToken) {
               throw new BaseError({

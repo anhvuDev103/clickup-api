@@ -1,8 +1,8 @@
 import express from 'express';
 
-import { createTaskController } from '@/controllers/tasks.controllers';
+import { createTaskController, getTasksController } from '@/controllers/tasks.controllers';
 import { accessTokenValidator } from '@/middlewares/auth.middlewares';
-import { createTaskValidator } from '@/middlewares/tasks.middlewares';
+import { createTaskValidator, getTaskValidator } from '@/middlewares/tasks.middlewares';
 import { wrapRequestHandler } from '@/utils/error-handler';
 
 const tasksRouter = express.Router();
@@ -21,9 +21,9 @@ const tasksRouter = express.Router();
  *    assignees: ObjectId[]
  *    priority?: TaskPriority
  *    status?: TaskStatus
- *    projectId: ObjectId
- *    categoryId: ObjectId
- *    subcategoryId: ObjectId
+ *    project_id: ObjectId
+ *    category_id: ObjectId
+ *    subcategory_id: ObjectId
  * }
  *
  * Response:
@@ -33,5 +33,26 @@ const tasksRouter = express.Router();
  * - 500 Internal Server Error: If there is an issue on the database side.
  */
 tasksRouter.post('/', accessTokenValidator, createTaskValidator, wrapRequestHandler(createTaskController));
+
+/**========================================================================================================================
+ * GET /tasks
+ *
+ * Request headers:
+ * {
+ *    Authorization: Bearer {{access_token}}
+ * }
+ *
+ * Request body:
+ * {
+ *    subcategory_id: ObjectId
+ * }
+ *
+ * Response:
+ * - 200 OK: On successfully getting the tasks.
+ * - 404 Not Found: If the user associated with the token is not found.
+ * - 422 Unprocessable Entity: When input data is invalid.
+ * - 500 Internal Server Error: If there is an issue on the database side.
+ */
+tasksRouter.get('/', accessTokenValidator, getTaskValidator, wrapRequestHandler(getTasksController));
 
 export default tasksRouter;

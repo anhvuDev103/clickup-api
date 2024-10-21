@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
 
+import { WORKSPACE_ID_HEADERS } from '@/constants/common';
 import { HttpStatus } from '@/constants/enums';
 import { RESPONSE_MESSAGE } from '@/constants/messages';
 import { BaseError } from '@/models/Errors.model';
@@ -20,7 +21,7 @@ export const getHierarchyController = async (
   req: Request<ParamsDictionary, unknown, GetHierarchyRequestBody>,
   res: Response,
 ) => {
-  const { workspace_id } = req.body;
+  const workspace_id = req.header(WORKSPACE_ID_HEADERS) as string;
   const { user_id } = req.decoded_authorization as TokenPayload;
 
   const result = await hierarchyService.getHierarchy(user_id, workspace_id);
