@@ -1,3 +1,5 @@
+import { ObjectId } from 'mongodb';
+
 export function generateOTP(limit = 4) {
   const digits = '0123456789';
   let OTP = '';
@@ -7,4 +9,16 @@ export function generateOTP(limit = 4) {
   }
 
   return OTP;
+}
+
+export function transformStringToObjectId(obj: Record<string, unknown>): Record<string, unknown> {
+  const transformedObj = Object.entries(obj).map(([key, value]) => {
+    if (typeof value === 'string' && ObjectId.isValid(value)) {
+      return [key, new ObjectId(value)];
+    }
+
+    return [key, value];
+  });
+
+  return Object.fromEntries(transformedObj);
 }

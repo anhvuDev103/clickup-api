@@ -1,12 +1,17 @@
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { checkSchema, ParamSchema } from 'express-validator';
+import _, { isEmpty } from 'lodash';
 import { isEmail, isMongoId } from 'validator';
 
+import { HttpStatus } from '@/constants/enums';
+import { RESPONSE_MESSAGE } from '@/constants/messages';
 import {
   CONTAIN_LOWERCASE_CHARACTERS_REGEX,
   CONTAIN_NUMBERS_REGEX,
   CONTAIN_SPECIAL_CHARACTERS_REGEX,
   CONTAIN_UPPERCASE_CHARACTERS_REGEX,
 } from '@/constants/regexs';
+import { BaseError } from '@/models/Errors.model';
 import { getCustomMessage, getInvalidMessage, getRequiredMessage, validate } from '@/utils/validate';
 
 export const getPasswordValidatorSchema = (field = 'password'): ParamSchema => {
@@ -43,7 +48,15 @@ export const getPasswordValidatorSchema = (field = 'password'): ParamSchema => {
   };
 };
 
-export const getObjectIdValidatorSchema = (field = 'id'): ParamSchema => {
+export const getObjectIdValidatorSchema = (field = 'id', excludes?: ('notEmpty' | 'isMongoId')[]): ParamSchema => {
+  const overrides: ParamSchema = {};
+
+  if (excludes && Array.isArray(excludes)) {
+    excludes.forEach((exclude) => {
+      overrides[exclude] = undefined;
+    });
+  }
+
   return {
     notEmpty: {
       errorMessage: getRequiredMessage(field),
@@ -52,6 +65,7 @@ export const getObjectIdValidatorSchema = (field = 'id'): ParamSchema => {
       errorMessage: getInvalidMessage(field),
     },
     trim: true,
+    ...overrides,
   };
 };
 
@@ -91,4 +105,27 @@ export const getObjectIdValidatorParams = (fields: string[]) => {
   }
 
   return validate(checkSchema(fieldsSchema, ['params']));
+};
+
+export const filterAllowedFields = <T>(fields: (keyof T)[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    req.body = _.pick(req.body, fields);
+
+    next();
+  };
+};
+
+export const checkEmptyBody = (middleware: RequestHandler) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.body || isEmpty(req.body)) {
+      const error = new BaseError({
+        status: HttpStatus.UnprocessableEntity,
+        message: RESPONSE_MESSAGE.EMPTY_REQUEST_BODY,
+      });
+
+      next(error);
+    }
+
+    middleware(req, res, next);
+  };
 };

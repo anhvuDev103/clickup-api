@@ -45,10 +45,52 @@ export const createTaskValidator = validate(
   ),
 );
 
-export const getTaskValidator = validate(
+export const getTasksValidator = validate(
   checkSchema(
     {
       subcategory_id: getObjectIdValidatorSchema('subcategory_id'),
+    },
+    ['body'],
+  ),
+);
+
+export const updateTaskValidator = validate(
+  checkSchema(
+    {
+      name: {
+        optional: true,
+        trim: true,
+      },
+      assignees: {
+        optional: true,
+        ...getObjectIdsValidatorSchema('assignees'),
+      },
+      priority: {
+        optional: true,
+        isIn: {
+          options: [taskPriorities],
+          errorMessage: getIsInMessage(taskPriorities)('priority'),
+        },
+      },
+      status: {
+        optional: true,
+        isIn: {
+          options: [TaskStatuses],
+          errorMessage: getIsInMessage(TaskStatuses)('status'),
+        },
+      },
+      project_id: {
+        optional: true,
+        ...getObjectIdValidatorSchema('project_id', ['notEmpty']),
+      },
+      category_id: {
+        optional: true,
+        ...getObjectIdValidatorSchema('category_id', ['notEmpty']),
+      },
+      subcategory_id: {
+        optional: true,
+        ...getObjectIdValidatorSchema('subcategory_id', ['notEmpty']),
+      },
     },
     ['body'],
   ),

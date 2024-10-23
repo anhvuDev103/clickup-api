@@ -1,17 +1,17 @@
 export const RESPONSE_MESSAGE = {
   //Common
-  SUCCESSFUL: 'Successful.',
+  SUCCESSFUL: 'Successful',
 
   //Sign up
-  SUCCESSFULLY_SIGNED_UP: 'Successfully signed up.',
-  EMAIL_ALREADY_TAKEN: 'Email already taken.',
+  SUCCESSFULLY_SIGNED_UP: 'Successfully signed up',
+  EMAIL_ALREADY_TAKEN: 'Email already taken',
 
   //Sign in
-  SUCCESSFULLY_SIGNED_IN: 'Successfully signed in.',
-  INCORRECT_PASSWORD: 'Incorrect password for this email.',
+  SUCCESSFULLY_SIGNED_IN: 'Successfully signed in',
+  INCORRECT_PASSWORD: 'Incorrect password for this email',
 
   //Log out
-  SUCCESSFULLY_LOGGED_OUT: 'Successfully logged out.',
+  SUCCESSFULLY_LOGGED_OUT: 'Successfully logged out',
 
   //Reset password
   RESET_PASSWORD_LINK_HAS_BEEN_SUCCESSFULLY_SENT: 'The reset password link has been successfully sent',
@@ -22,15 +22,17 @@ export const RESPONSE_MESSAGE = {
   PASSWORD_SUCCESSFULLY_CHANGED: 'The password successfully changed',
 
   //Token
-  REFRESH_TOKEN_DOES_NOT_EXIST: 'This refresh token does not exist.',
+  REFRESH_TOKEN_DOES_NOT_EXIST: 'This refresh token does not exist',
 
   //Hierarchy
-  PARENT_NOT_FOUND: 'Parent not found.',
+  PARENT_NOT_FOUND: 'Parent not found',
 
   //Error
-  VALIDATION_FAILED: 'Validation failed for the request payload.',
-  EMAIL_NOT_VERIFIED_YET: 'Email not verified yet.',
-  EMAIL_NOT_FOUND: 'Email not found.',
-  WORKSPACE_NOT_FOUND: 'Workspace not found.',
-  USER_NOT_FOUND: 'User not found.',
+  VALIDATION_FAILED: 'Validation failed for the request payload',
+  EMAIL_NOT_VERIFIED_YET: 'Email not verified yet',
+  EMAIL_NOT_FOUND: 'Email not found',
+  WORKSPACE_NOT_FOUND: 'Workspace not found',
+  USER_NOT_FOUND: 'User not found',
+  TASK_NOT_FOUND: 'Task not found',
+  EMPTY_REQUEST_BODY: 'Request body cannot be empty',
 };

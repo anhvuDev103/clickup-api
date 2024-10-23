@@ -13,6 +13,9 @@ type TaskContructor = {
   project_id: ObjectId;
   category_id: ObjectId;
   subcategory_id: ObjectId;
+
+  created_at?: Date;
+  updated_at?: Date;
 };
 
 class Task {
@@ -27,7 +30,12 @@ class Task {
   category_id: ObjectId;
   subcategory_id: ObjectId;
 
+  created_at: Date;
+  updated_at: Date;
+
   constructor(payload: TaskContructor) {
+    const now = new Date();
+
     this._id = payload._id || new ObjectId();
 
     this.name = payload.name;
@@ -38,6 +46,9 @@ class Task {
     this.project_id = payload.project_id;
     this.category_id = payload.category_id;
     this.subcategory_id = payload.subcategory_id;
+
+    this.created_at = payload.created_at || now;
+    this.updated_at = payload.updated_at || now;
   }
 }
 

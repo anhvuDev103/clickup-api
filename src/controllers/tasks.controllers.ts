@@ -1,7 +1,12 @@
 import { Request, Response } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
 
-import { CreateTaskRequestBody, GetTasksRequestBody } from '@/models/requests/tasks.requests';
+import {
+  CreateTaskRequestBody,
+  GetTasksRequestBody,
+  UpdateTaskRequestBody,
+  UpdateTaskRequestParams,
+} from '@/models/requests/tasks.requests';
 import { BaseResponse } from '@/models/Response.model';
 import tasksService from '@/services/tasks.services';
 import { TokenPayload } from '@/utils/jwt';
@@ -26,6 +31,21 @@ export const getTasksController = async (
   const { subcategory_id } = req.body;
 
   const result = await tasksService.getTasks(subcategory_id);
+
+  const response = new BaseResponse({
+    result,
+  });
+
+  return res.status(response.status).json(response);
+};
+
+export const updateTaskController = async (
+  req: Request<UpdateTaskRequestParams, unknown, UpdateTaskRequestBody>,
+  res: Response,
+) => {
+  const { task_id } = req.params;
+
+  const result = await tasksService.updateTask(task_id, req.body);
 
   const response = new BaseResponse({
     result,
