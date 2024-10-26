@@ -269,14 +269,12 @@ export const generateGetHierachyAggregate = (user_id: string, workspace_id: stri
           updated_at: 0,
         },
         categories: {
-          _id: 0,
           parent_id: 0,
           member_ids: 0,
           created_at: 0,
           updated_at: 0,
           hierarchy_level: 0,
           subcategories: {
-            _id: 0,
             parent_id: 0,
             member_ids: 0,
             created_at: 0,
