@@ -12,17 +12,19 @@ type ValidationErrorContructor = {
   details: Record<string, ExpressValidationError>;
 } & BaseErrorContructor;
 
-export class BaseError extends Error {
+export class BaseError {
   status: number;
   error: string;
   message: string;
+  stack: string;
 
   constructor(payload: BaseErrorContructor) {
-    super(payload.message);
+    const now = new Date().toISOString();
 
     this.status = payload.status;
     this.error = _.findKey(HttpStatus, (v) => v === payload.status) || 'unknown';
     this.message = payload.message;
+    this.stack = `[${now}] [Error] ${payload.message}`;
   }
 }
 

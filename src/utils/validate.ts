@@ -30,6 +30,18 @@ export const validate = (validation: RunnableValidationChains<ValidationChain>) 
       }
     });
 
+    for (const error of errors) {
+      if (!error.isEmpty()) {
+        const [[key, details]] = Object.entries(error.mapped());
+
+        if (details.msg instanceof BaseError && details.msg.status !== HttpStatus.UnprocessableEntity) {
+          return next(details.msg);
+        }
+
+        errorObject[key] = _.pick(details, ['value', 'msg']) as ExpressValidationError;
+      }
+    }
+
     const validationError = new ValidationError({
       status: HttpStatus.UnprocessableEntity,
       message: RESPONSE_MESSAGE.VALIDATION_FAILED,

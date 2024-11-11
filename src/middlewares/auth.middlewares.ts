@@ -68,6 +68,10 @@ export const signInValidator = validate(
         trim: true,
       },
       password: {
+        notEmpty: {
+          errorMessage: getRequiredMessage('password'),
+        },
+        trim: true,
         custom: {
           options: async (value: string, { req }) => {
             const { email } = req.body as SignInRequestBody;

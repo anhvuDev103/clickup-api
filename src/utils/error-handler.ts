@@ -1,5 +1,4 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express';
-import _ from 'lodash';
 
 import { HttpStatus } from '@/constants/enums';
 import { BaseError } from '@/models/Errors.model';
@@ -17,7 +16,7 @@ export const wrapRequestHandler = <P>(requestHandler: RequestHandler<P>) => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const defaultErrorRequestHandler = (err: any, _req: Request, res: Response, _next: NextFunction) => {
   if (err instanceof BaseError) {
-    return res.status(err.status).json(_.omit(err, 'details'));
+    return res.status(err.status).json(err);
   }
 
   Object.getOwnPropertyNames(err).forEach((key) => {
@@ -31,5 +30,5 @@ export const defaultErrorRequestHandler = (err: any, _req: Request, res: Respons
     message: err.message,
   });
 
-  return res.status(HttpStatus.InternalServerError).json(_.omit(error, 'details'));
+  return res.status(HttpStatus.InternalServerError).json(error);
 };
