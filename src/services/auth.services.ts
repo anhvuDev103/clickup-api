@@ -4,7 +4,7 @@ import { HttpStatus, TokenType } from '@/constants/enums';
 import { RESPONSE_MESSAGE } from '@/constants/messages';
 import { BaseError } from '@/models/Errors.model';
 import { SignUpRequestBody } from '@/models/requests/auth.requests';
-import { SignInResponse, SignUpResponse } from '@/models/responses/auth.responses';
+import { RefreshTokenResponse, SignInResponse, SignUpResponse } from '@/models/responses/auth.responses';
 import RefreshToken from '@/models/schemas/RefreshToken.schema';
 import User from '@/models/schemas/User.schema';
 import { hashPassword } from '@/utils/crypto';
@@ -43,14 +43,26 @@ class AuthService {
    * Generates a refresh token for a user.
    *
    * @param {string} user_id - The id of user.
+   * @param {number} exp - The expiry date of the token.
    *
    * @returns {Promise<string>} - A signed refresh token.
    *
    * @throws {Error} if jwt sign token failed.
    */
 
-  private async signRefreshToken(user_id: string): Promise<string> {
-    const token = await signToken({
+  private signRefreshToken(user_id: string, exp?: number): Promise<string> {
+    if (exp) {
+      return signToken({
+        payload: {
+          user_id,
+          token_type: TokenType.RefreshToken,
+          exp,
+        },
+        secretOrPrivateKey: process.env.REFRESH_TOKEN_SECRET as string,
+      });
+    }
+
+    return signToken({
       payload: {
         user_id,
         token_type: TokenType.RefreshToken,
@@ -60,8 +72,6 @@ class AuthService {
         expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN as string,
       },
     });
-
-    return token;
   }
 
   /**========================================================================================================================
@@ -311,6 +321,47 @@ class AuthService {
         },
       },
     );
+  }
+
+  /**========================================================================================================================
+   * Refresh the access_token and create new refresh_token for user
+   *
+   * @param {Object} payload - An object containing refresh_token info.
+   * @param {string} payload.user_id - The user'id decoded from access_token.
+   * @param {number} payload.exp - The new password provided by the user.
+   * @param {number} payload.token - The refresh_token provided by the client.
+   *
+   * @returns {Promise<RefreshTokenResponse>} - A promise that resolves with the refreshed tokens object if successful.
+   *
+   * @throws {Error} if any database side errors occur.
+   */
+
+  async refreshToken(payload: { user_id: string; exp: number; token: string }): Promise<RefreshTokenResponse> {
+    const { user_id, exp, token } = payload;
+
+    const [refresh_token, access_token] = await Promise.all([
+      this.signRefreshToken(user_id, exp),
+      this.signAccessToken(user_id),
+      databaseService.refreshTokens.deleteOne({
+        token,
+      }),
+    ]);
+
+    const decoded_refresh_token = await this.decodeRefreshToken(refresh_token);
+
+    await databaseService.refreshTokens.insertOne(
+      new RefreshToken({
+        user_id: new ObjectId(user_id),
+        token: refresh_token,
+        iat: decoded_refresh_token.iat,
+        exp: decoded_refresh_token.exp,
+      }),
+    );
+
+    return {
+      refresh_token,
+      access_token,
+    };
   }
 }
 

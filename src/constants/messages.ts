@@ -10,6 +10,9 @@ export const RESPONSE_MESSAGE = {
   SUCCESSFULLY_SIGNED_IN: 'Successfully signed in',
   INCORRECT_PASSWORD: 'Incorrect password for this email',
 
+  //Tokens
+  ACCESS_TOKEN_SUCCESSFULLY_REFRESHED: 'Access token successfully refreshed',
+
   //Log out
   SUCCESSFULLY_LOGGED_OUT: 'Successfully logged out',
 

@@ -28,3 +28,7 @@ export interface ChangePasswordRequestBody {
   current_password: string;
   new_password: string;
 }
+
+export interface RefreshTokenRequestBody {
+  refresh_token: string;
+}

@@ -4,6 +4,7 @@ import {
   changePasswordController,
   forgotPasswordController,
   logOutController,
+  refreshTokenController,
   resetPasswordController,
   signInController,
   signUpController,
@@ -127,5 +128,20 @@ authRouter.patch(
   changePasswordValidator,
   wrapRequestHandler(changePasswordController),
 );
+
+/**========================================================================================================================
+ * PATCH /auth/refresh-token
+ *
+ * Request body:
+ * {
+ *    refresh_token: string
+ * }
+ *
+ * Response:
+ * - 200 OK: If the access_token and refresh_token is successfully signed.
+ * - 422 Unprocessable Entity: If the refresh_token is invalid.
+ * - 500 Internal Server Error: If there is an issue on the database side.
+ */
+authRouter.post('/refresh-token', refreshTokenValidator, wrapRequestHandler(refreshTokenController));
 
 export default authRouter;

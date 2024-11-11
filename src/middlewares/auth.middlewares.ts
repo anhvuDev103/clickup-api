@@ -107,11 +107,8 @@ export const refreshTokenValidator = validate(
         },
         custom: {
           options: async (value: string, { req }) => {
-            const { user_id } = (req as Request).decoded_authorization as TokenPayload;
-
             const refreshToken = await databaseService.refreshTokens.findOne({
               token: value,
-              user_id: new ObjectId(user_id),
             });
 
             if (!refreshToken) {
@@ -120,6 +117,13 @@ export const refreshTokenValidator = validate(
                 message: RESPONSE_MESSAGE.REFRESH_TOKEN_DOES_NOT_EXIST,
               });
             }
+
+            const decoded_refresh_token = await verifyToken({
+              token: value,
+              secretOrPublicKey: process.env.REFRESH_TOKEN_SECRET as string,
+            });
+
+            (req as Request).decoded_refresh_token = decoded_refresh_token;
 
             return true;
           },

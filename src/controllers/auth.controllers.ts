@@ -7,6 +7,7 @@ import {
   ChangePasswordRequestBody,
   ForgotPasswordRequestBody,
   LogOutRequestBody,
+  RefreshTokenRequestBody,
   ResetPasswordRequestBody,
   SignInRequestBody,
   SignUpRequestBody,
@@ -96,6 +97,27 @@ export const changePasswordController = async (
 
   const response = new BaseResponse({
     message: RESPONSE_MESSAGE.PASSWORD_SUCCESSFULLY_CHANGED,
+  });
+
+  return res.status(response.status).json(response);
+};
+
+export const refreshTokenController = async (
+  req: Request<ParamsDictionary, unknown, RefreshTokenRequestBody>,
+  res: Response,
+) => {
+  const { refresh_token } = req.body;
+  const { user_id, exp } = req.decoded_refresh_token as TokenPayload;
+
+  const result = await authService.refreshToken({
+    user_id,
+    exp,
+    token: refresh_token,
+  });
+
+  const response = new BaseResponse({
+    message: RESPONSE_MESSAGE.ACCESS_TOKEN_SUCCESSFULLY_REFRESHED,
+    result,
   });
 
   return res.status(response.status).json(response);
