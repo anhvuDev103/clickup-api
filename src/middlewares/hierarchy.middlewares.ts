@@ -2,7 +2,7 @@ import { checkSchema } from 'express-validator';
 
 import { getCustomMessage, getInvalidMessage, getRequiredMessage, validate } from '@/utils/validate';
 
-import { getMemberEmailsValidatorSchema, getObjectIdValidatorSchema } from './shared.middlewares';
+import { getMemberEmailsValidatorSchema } from './shared.middlewares';
 
 export const createProjectValidator = validate(
   checkSchema(
@@ -32,7 +32,6 @@ export const createProjectValidator = validate(
         },
       },
       member_emails: getMemberEmailsValidatorSchema(),
-      workspace_id: getObjectIdValidatorSchema('workspace_id'),
     },
     ['body'],
   ),

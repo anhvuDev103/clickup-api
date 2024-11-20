@@ -6,10 +6,9 @@ export interface GetHierarchyRequestBody {
 
 export interface CreateProjectRequestBody {
   name: string;
-  description: string;
+  description?: string;
   is_private: boolean;
   member_emails: string[];
-  workspace_id: string;
 }
 
 export interface CreateSubCategoryRequestBody {

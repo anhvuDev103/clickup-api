@@ -5,7 +5,7 @@ import { CreateCategoryRequestBody, CreateProjectRequestBody } from '@/models/re
 import { GetHierarchyResponse } from '@/models/responses/hierarchy.responses';
 import Category from '@/models/schemas/Category.schema';
 import Project from '@/models/schemas/Project.schema';
-import { generateGetHierachyAggregate } from '@/utils/aggregates';
+import { generateGetHierarchyAggregate } from '@/utils/aggregates';
 
 import databaseService from './database.services';
 
@@ -17,7 +17,7 @@ class HierarchyService {
    * Get the hierarchy.
    *
    * @param {string} user_id - The id of user.
-   * @param {string} workspace_id - The emails of the space members, provided by the user.
+   * @param {string} workspace_id - The id of workspace.
    *
    * @returns {Promise<GetHierarchyResponse>} - Returns GetHierarchyResponse[].
    *
@@ -26,7 +26,7 @@ class HierarchyService {
 
   async getHierarchy(user_id: string, workspace_id: string): Promise<GetHierarchyResponse[]> {
     const hierarchy = await databaseService.projects
-      .aggregate<GetHierarchyResponse>(generateGetHierachyAggregate(user_id, workspace_id))
+      .aggregate<GetHierarchyResponse>(generateGetHierarchyAggregate(user_id, workspace_id))
       .toArray();
 
     return hierarchy;
@@ -41,26 +41,36 @@ class HierarchyService {
    * @param {string} payload.description - The description space provided by the user.
    * @param {boolean} payload.is_private - The boolean represents a private space provided by the user.
    * @param {Array} payload.member_emails - The emails of the space members, provided by the user.
-   * @param {string} payload.workspace_id - The emails of the space members, provided by the user.
+   * @param {string} workspace_id - The id of workspace.
    *
    * @returns {Promise<void>} - Returns nothing.
    *
    * @throws {Error} if any database side errors occur.
    */
 
-  async createProject(user_id: string, payload: CreateProjectRequestBody): Promise<void> {
+  async createProject(user_id: string, payload: CreateProjectRequestBody, workspace_id: string): Promise<void> {
     const member_ids = await databaseService.getUserIdByExistingEmails(payload.member_emails, {
       excludedEmail: user_id,
     });
 
-    await databaseService.projects.insertOne(
+    const { insertedId } = await databaseService.projects.insertOne(
       new Project({
         ...payload,
         owner_id: new ObjectId(user_id),
-        workspace_id: new ObjectId(payload.workspace_id),
+        workspace_id: new ObjectId(workspace_id),
         member_ids,
       }),
     );
+
+    await this.createSubCategory({
+      user_id,
+      parent_id: insertedId.toString(),
+      payload: {
+        name: 'List',
+        member_emails: [],
+        is_private: false,
+      },
+    });
   }
 
   /**========================================================================================================================

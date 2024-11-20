@@ -165,7 +165,7 @@ export const generateGetWorkspaceAggregate = (user_id: string, workspace_id: str
   ];
 };
 
-export const generateGetHierachyAggregate = (user_id: string, workspace_id: string): Document[] => {
+export const generateGetHierarchyAggregate = (user_id: string, workspace_id: string): Document[] => {
   return [
     {
       $match: {
@@ -192,11 +192,7 @@ export const generateGetHierachyAggregate = (user_id: string, workspace_id: stri
     {
       $unwind: {
         path: '$categories',
-      },
-    },
-    {
-      $unwind: {
-        path: '$categories',
+        preserveNullAndEmptyArrays: true,
       },
     },
     {
@@ -220,10 +216,18 @@ export const generateGetHierachyAggregate = (user_id: string, workspace_id: stri
               subcategories: ['$categories'],
             },
             else: {
-              $mergeObjects: [
-                '$categories',
+              $cond: [
                 {
-                  is_hidden: false,
+                  $eq: ['$categories.subcategories', []],
+                },
+                '$$REMOVE',
+                {
+                  $mergeObjects: [
+                    '$categories',
+                    {
+                      is_hidden: false,
+                    },
+                  ],
                 },
               ],
             },

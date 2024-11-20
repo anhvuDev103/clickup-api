@@ -37,9 +37,10 @@ export const createProjectController = async (
   req: Request<ParamsDictionary, unknown, CreateProjectRequestBody>,
   res: Response,
 ) => {
+  const workspace_id = req.header(WORKSPACE_ID_HEADERS) as string;
   const { user_id } = req.decoded_authorization as TokenPayload;
 
-  await hierarchyService.createProject(user_id, req.body);
+  await hierarchyService.createProject(user_id, req.body, workspace_id);
 
   const response = new BaseResponse();
 

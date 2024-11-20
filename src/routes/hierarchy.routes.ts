@@ -41,11 +41,12 @@ hierarchyRouterRouter.get(
 );
 
 /**========================================================================================================================
- * POST /hierarchy/project
+ * POST /hierarchy/projects
  *
  * Request headers:
  * {
  *    Authorization: Bearer {{access_token}}
+ *    X-Workspace-Id: ObjectId
  * }
  *
  * Request body:
@@ -64,14 +65,15 @@ hierarchyRouterRouter.get(
  * - 500 Internal Server Error: If there is an issue on the database side.
  */
 hierarchyRouterRouter.post(
-  '/project',
+  '/projects',
   accessTokenValidator,
+  getWorkspaceIdValidatorHeaders(),
   createProjectValidator,
   wrapRequestHandler(createProjectController),
 );
 
 /**========================================================================================================================
- * POST /hierarchy/project/:project_id/subcategory
+ * POST /hierarchy/projects/:project_id/subcategory
  *
  * Request headers:
  * {
@@ -97,7 +99,7 @@ hierarchyRouterRouter.post(
  * - 500 Internal Server Error: If there is an issue on the database side.
  */
 hierarchyRouterRouter.post(
-  '/project/:project_id/subcategory',
+  '/projects/:project_id/subcategory',
   accessTokenValidator,
   getObjectIdValidatorParams(['project_id']),
   createSubCategoryValidator,
@@ -105,7 +107,7 @@ hierarchyRouterRouter.post(
 );
 
 /**========================================================================================================================
- * POST /hierarchy/category/:category_id/subcategory
+ * POST /hierarchy/categories/:category_id/subcategory
  *
  * Request headers:
  * {
@@ -131,7 +133,7 @@ hierarchyRouterRouter.post(
  * - 500 Internal Server Error: If there is an issue on the database side.
  */
 hierarchyRouterRouter.post(
-  '/category/:category_id/subcategory',
+  '/categories/:category_id/subcategory',
   accessTokenValidator,
   getObjectIdValidatorParams(['category_id']),
   createSubCategoryValidator,
@@ -139,7 +141,7 @@ hierarchyRouterRouter.post(
 );
 
 /**========================================================================================================================
- * POST /hierarchy/project/:project_id/category
+ * POST /hierarchy/projects/:project_id/category
  *
  * Request headers:
  * {
@@ -165,7 +167,7 @@ hierarchyRouterRouter.post(
  * - 500 Internal Server Error: If there is an issue on the database side.
  */
 hierarchyRouterRouter.post(
-  '/project/:project_id/category',
+  '/projects/:project_id/category',
   accessTokenValidator,
   getObjectIdValidatorParams(['project_id']),
   createCategoryValidator,
